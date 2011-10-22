@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="pt.up.fe.cmov"
+      android:versionCode="1"
+      android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="8" />
+
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".Cmov1_doctorActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <provider android:name="pt.up.fe.cmov.common.providers.DoctorContentProvider"
+         android:authorities="pt.up.fe.cmov.common.providers.doctorcontentprovider" />       
+
+    </application>
+    <uses-permission android:name="android.permission.INTERNET">
+	</uses-permission>
+    
+</manifest>
