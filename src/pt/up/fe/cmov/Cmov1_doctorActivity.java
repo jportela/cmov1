@@ -2,9 +2,10 @@ package pt.up.fe.cmov;
 
 import java.util.ArrayList;
 
-import pt.up.fe.cmov.common.entities.Doctor;
-import pt.up.fe.cmov.common.entities.Speciality;
-import pt.up.fe.cmov.common.operations.DoctorOperations;
+import pt.up.fe.cmov.entities.Doctor;
+import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.operations.DoctorOperations;
+import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +40,7 @@ public class Cmov1_doctorActivity extends Activity {
 		    //	Doctor d = doctors.get(i);
 		    //	Log.i("DOCTOR", d.getName());
 		    //}
+		    RemoteSync.oneClickSync(null);
         }
         catch (Exception e) {
         	e.printStackTrace();
