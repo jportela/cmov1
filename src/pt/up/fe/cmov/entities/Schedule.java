@@ -2,7 +2,7 @@ package pt.up.fe.cmov.entities;
 
 import java.util.Date;
 
-public class Schedule {
+public class Schedule implements Comparable<Schedule>{
 	
 	private int id,schedule_plan_id;
 	private Date startHour,endHour,dateTime;
@@ -62,5 +62,21 @@ public class Schedule {
 	
 	public void setDatetime(Date dateTime){
 		this.dateTime = dateTime;
+	}
+
+	@Override
+	public int compareTo(Schedule another) {
+		if(this.dateTime.equals(another.dateTime)){
+			if(another.getStartHour().after(this.startHour) && another.getStartHour().before(this.endHour))
+				return 1;
+			if(this.startHour.equals(another.getStartHour()) || another.getStartHour().equals(this.endHour)) 
+				return 1;
+			if(another.getEndHour().before(this.endHour) && another.getEndHour().after(this.startHour))
+				return 1;
+			if(another.getStartHour().before(this.startHour) && another.getEndHour().after(this.endHour))
+				return 1;
+		}
+		
+		return 0;
 	}
 }

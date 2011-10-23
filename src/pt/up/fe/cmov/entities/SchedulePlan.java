@@ -7,7 +7,7 @@ public class SchedulePlan {
 	
 	private int id,doctor_id;
 	private Date startDate;
-	private HashMap<Date,Schedule> scheduleBlocks;
+	private HashMap<Schedule,Integer> scheduleBlocks;
 
 	public static final String 	SCHEDULE_PLAN_ID = "_id";
 	public static final String 	SCHEDULE_DOCTOR_ID = "doctor_id";
@@ -20,7 +20,7 @@ public class SchedulePlan {
 		this.id = id;
 		this.doctor_id = doctor_id;
 		this.startDate = startDate;
-		scheduleBlocks = new HashMap<Date,Schedule>();
+		scheduleBlocks = new HashMap<Schedule,Integer>();
 	}
 	
 	public void setId(int id){
@@ -45,5 +45,7 @@ public class SchedulePlan {
 	
 	public Date getStartDate(){
 		return this.startDate;
-	}	
+	}
+	
+
 }
