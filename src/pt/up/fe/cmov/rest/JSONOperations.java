@@ -15,7 +15,6 @@ import pt.up.fe.cmov.entities.Speciality;
 public class JSONOperations {
 	
 	public static final DateFormat dbDateFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
-	//public static final DateFormat dbDateFormater = new SimpleDateFormat();
 
 	public static JSONObject doctorToJSON(Doctor doctor) throws JSONException{
 		
