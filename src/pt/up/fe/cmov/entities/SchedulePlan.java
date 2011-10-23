@@ -7,7 +7,7 @@ public class SchedulePlan {
 	
 	private int id,doctor_id;
 	private Date startDate;
-	private HashMap<Schedule,Integer> scheduleBlocks;
+	private HashMap<Schedule,Boolean> scheduleBlocks;
 
 	public static final String 	SCHEDULE_PLAN_ID = "_id";
 	public static final String 	SCHEDULE_DOCTOR_ID = "doctor_id";
@@ -20,7 +20,7 @@ public class SchedulePlan {
 		this.id = id;
 		this.doctor_id = doctor_id;
 		this.startDate = startDate;
-		scheduleBlocks = new HashMap<Schedule,Integer>();
+		scheduleBlocks = new HashMap<Schedule,Boolean>();
 	}
 	
 	public void setId(int id){
@@ -47,5 +47,18 @@ public class SchedulePlan {
 		return this.startDate;
 	}
 	
+	public boolean addScheduleBlock(Schedule sch){
+		if(!this.scheduleBlocks.containsKey(sch))
+			return this.scheduleBlocks.put(sch, true);
+		else
+			return false;
+	}
+	
+	public boolean removeScheduleBlock(Schedule sch){
+		if(this.scheduleBlocks.containsKey(sch))
+			return this.scheduleBlocks.remove(sch);
+		else
+			return false;
+	}
 
 }

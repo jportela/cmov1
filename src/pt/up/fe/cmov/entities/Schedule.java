@@ -71,12 +71,13 @@ public class Schedule implements Comparable<Schedule>{
 				return 1;
 			if(this.startHour.equals(another.getStartHour()) || another.getStartHour().equals(this.endHour)) 
 				return 1;
+			if(this.endHour.equals(another.getStartHour()) || another.getEndHour().equals(this.startHour)) 
+				return 1;
 			if(another.getEndHour().before(this.endHour) && another.getEndHour().after(this.startHour))
 				return 1;
 			if(another.getStartHour().before(this.startHour) && another.getEndHour().after(this.endHour))
 				return 1;
-		}
-		
+		}	
 		return 0;
 	}
 }
