@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class RailsRestClient {
 	
-	public final static String SERVER_URL = "http://10.0.0.144:3000/";
+	public final static String SERVER_URL = "http://172.30.40.58:3000/";
 
 	public static JSONObject Get(String controller) {
 		return HttpClient.SendHttpGet(SERVER_URL + controller + ".json");
@@ -13,6 +13,14 @@ public class RailsRestClient {
 	
 	public static JSONArray GetArray(String controller) {
 		return HttpClient.SendHttpGetArray(SERVER_URL + controller + ".json");
+	}
+	
+	public static JSONObject Get(String controller, String parameters) {
+		return HttpClient.SendHttpGet(SERVER_URL + controller + ".json?"+parameters);
+	}
+	
+	public static JSONArray GetArray(String controller, String parameters) {
+		return HttpClient.SendHttpGetArray(SERVER_URL + controller + ".json?"+parameters);
 	}
 	
 	public static JSONObject Post(String controller, JSONObject obj) {

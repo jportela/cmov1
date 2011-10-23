@@ -6,14 +6,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
+import pt.up.fe.cmov.providers.SpecialityContentProvider;
 import pt.up.fe.cmov.rest.RailsRestClient;
+import android.net.Uri;
+import android.util.Log;
 
 public class Speciality {
 	
 	private int id;
 	private String name;
+	
+	public static final String SPECIALITY_ID = "_id";
+	public static final String SPECIALITY_NAME = "name";
+	
+	public static final Uri CONTENT_URI = Uri.parse("content://" + SpecialityContentProvider.AUTHORITY + "/specialities");	
+	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.specialities";
 	
 	public Speciality(int id, String name) {
 		this.id = id;
