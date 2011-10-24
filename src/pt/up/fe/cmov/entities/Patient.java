@@ -9,10 +9,7 @@ public class Patient extends Person {
 
 	private String address;
 	private String sex;
-	
-	private String photo;
-	private Speciality speciality;
-	
+		
 	public static final String PATIENT_ADDRESS = "address";
 	public static final String PATIENT_SEX = "sex";
 	

@@ -3,7 +3,6 @@ package pt.up.fe.cmov.entities;
 import java.util.Date;
 
 import pt.up.fe.cmov.providers.AppointmentContentProvider;
-import pt.up.fe.cmov.providers.DoctorContentProvider;
 import android.net.Uri;
 
 public class Appointment {
