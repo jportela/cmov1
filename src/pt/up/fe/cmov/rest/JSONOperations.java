@@ -8,8 +8,10 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
+import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
 
 public class JSONOperations {
@@ -69,5 +71,39 @@ public class JSONOperations {
 	public static Date JSONToDate(JSONObject json) throws JSONException, ParseException {
 		Date time =	dbDateFormater.parse(json.getString("time"));
 		return time;
+	}
+	
+	public static JSONObject schedulePlanToJSON(SchedulePlan sch) throws JSONException{
+		String startDate = dbDateFormater.format(sch.getStartDate().getTime());
+		
+		JSONObject json = new JSONObject();
+		json.put(SchedulePlan.SCHEDULE_STARTDATE, startDate);
+		json.put(SchedulePlan.SCHEDULE_DOCTOR_ID, sch.getDoctorId());
+		return json;
+	}
+	
+	public static SchedulePlan JSONToSchedulePlan(JSONObject json) throws JSONException, ParseException{
+		int id = json.getInt("id");
+		Date startime =	dbDateFormater.parse(json.getString(SchedulePlan.SCHEDULE_STARTDATE));
+		int doctor_id = json.getInt(SchedulePlan.SCHEDULE_DOCTOR_ID);
+		return new SchedulePlan(id,doctor_id,startime);
+	}
+	
+	public static JSONObject appointmentToJSON(Appointment app) throws JSONException{
+		String startDate = dbDateFormater.format(app.getDate().getTime());
+		
+		JSONObject json = new JSONObject();
+		json.put(Appointment.APPOINTMENT_PATIENT_ID,app.getPatientId());
+		json.put(Appointment.APPOINTMENT_SCHEDULE_ID,app.getScheduleId());
+		json.put(Appointment.APPOINTMENT_DATE, startDate);
+		return json;
+	}
+	
+	public static Appointment JSONToAppointment(JSONObject json) throws JSONException, ParseException{
+		int id = json.getInt("id");
+		Date startime =	dbDateFormater.parse(json.getString(Appointment.APPOINTMENT_DATE));
+		int patient_id = json.getInt(Appointment.APPOINTMENT_PATIENT_ID);
+		int schedule_id = json.getInt(Appointment.APPOINTMENT_SCHEDULE_ID);
+		return new Appointment(id,patient_id,schedule_id,startime);
 	}
 }

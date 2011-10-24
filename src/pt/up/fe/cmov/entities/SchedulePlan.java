@@ -3,6 +3,10 @@ package pt.up.fe.cmov.entities;
 import java.util.Date;
 import java.util.HashMap;
 
+import pt.up.fe.cmov.providers.SchedulePlanContentProvider;
+
+import android.net.Uri;
+
 public class SchedulePlan {
 	
 	private int id,doctor_id;
@@ -13,8 +17,8 @@ public class SchedulePlan {
 	public static final String 	SCHEDULE_DOCTOR_ID = "doctor_id";
 	public static final String 	SCHEDULE_STARTDATE = "start_date";
 	
-	//public static final Uri CONTENT_URI = Uri.parse("content://" + ScheduleContentProvider.AUTHORITY + "/schedule_plans");	
-	//public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.schedule_plans";
+	public static final Uri CONTENT_URI = Uri.parse("content://" + SchedulePlanContentProvider.AUTHORITY + "/schedule_plans");	
+	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.schedule_plans";
 	
 	public SchedulePlan(int id, int doctor_id, Date startDate){
 		this.id = id;
