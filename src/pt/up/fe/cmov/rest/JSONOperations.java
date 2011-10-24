@@ -106,4 +106,17 @@ public class JSONOperations {
 		int schedule_id = json.getInt(Appointment.APPOINTMENT_SCHEDULE_ID);
 		return new Appointment(id,patient_id,schedule_id,startime);
 	}
+
+	public static JSONObject DateToJSON(Date date) throws JSONException, ParseException {
+		JSONObject obj = new JSONObject();
+		obj.put("time", dbDateFormater.format(date));
+		return obj;
+	}
+	
+	public static Speciality JSONToSpeciality(JSONObject json) throws JSONException, ParseException{
+				
+		int id = json.getInt("id");
+		String name = json.getString("name");
+		return new Speciality(id,name);
+	}
 }

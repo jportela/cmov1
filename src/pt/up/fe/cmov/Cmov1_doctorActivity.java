@@ -18,7 +18,7 @@ public class Cmov1_doctorActivity extends Activity {
         setContentView(R.layout.main);
                //Integer id = (Integer) jsonObjRecv.get("id");
         try {
-		    Speciality.Records.populate();
+		    //Speciality.Records.populate();
 	        /*Doctor d1 = new Doctor(0, "Joaquim", null, "poop", "like", Speciality.Records.get(3));
 	        Doctor d2 = new Doctor(0, "Maria", null, "a", "boss", Speciality.Records.get(6));
 	        Doctor d3 = new Doctor(0, "Joe", null, "calhou", "poop", Speciality.Records.get(11));
@@ -40,7 +40,7 @@ public class Cmov1_doctorActivity extends Activity {
 		    //	Doctor d = doctors.get(i);
 		    //	Log.i("DOCTOR", d.getName());
 		    //}
-		    RemoteSync.oneClickSync(null);
+		    RemoteSync.oneClickSync(this, null);
         }
         catch (Exception e) {
         	e.printStackTrace();
