@@ -83,7 +83,7 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 		}
 	} 
 	
-	public static SchedulePlan getRemoteServerDoctor(Context context, int id){
+	public static SchedulePlan getRemoteServerSchedulePlan(Context context, int id){
 		JSONObject json = RailsRestClient.Get(SCHEDULEPLAN_CONTROLER + "/" + Integer.toString(id));
 		try {
 			 return JSONOperations.JSONToSchedulePlan(json);
@@ -95,7 +95,7 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 		return null;
 	}
 	
-	public static SchedulePlan getDoctor(Context context, int id) {
+	public static SchedulePlan getSchedulePlan(Context context, int id) {
 				
 		Uri querySchedulePlanUri = ContentUris.withAppendedId(SchedulePlan.CONTENT_URI, id); 
 		Cursor cSchedulePlan = context.getContentResolver().query(querySchedulePlanUri, null, null, null, null); 

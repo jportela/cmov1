@@ -15,7 +15,6 @@ public class SystemOperations {
 		Cursor c = context.getContentResolver().query(SystemContentProvider.CONTENT_URI, null, null, null, null); 
 		Date lastSync = null;
 		if (c.moveToNext()) { 
-			  //Date birthdate = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_BIRTHDATE));
 			String dateStr = c.getString(c.getColumnIndex(SystemContentProvider.SYSTEM_LAST_SYNC));
 			try {
 				lastSync = JSONOperations.dbDateFormater.parse(dateStr);
