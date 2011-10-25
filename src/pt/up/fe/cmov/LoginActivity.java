@@ -52,7 +52,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	@Override
 	public void run() {
 		try{
-			docs = DoctorOperations.queryDoctorsRemoteServer();
+			docs = DoctorOperations.queryDoctorsRemoteServer(this);
 			for(Doctor doc:docs){
 	            if(username.equals(doc.getUsername()) && password.equals(doc.getPassword())){
 	                try

@@ -14,6 +14,8 @@ import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.operations.SpecialityOperations;
+import android.content.Context;
 
 public class JSONOperations {
 	
@@ -34,7 +36,7 @@ public class JSONOperations {
 		return json;
 	}
 	
-	public static Doctor JSONToDoctor(JSONObject json) throws JSONException, ParseException{
+	public static Doctor JSONToDoctor(Context context, JSONObject json) throws JSONException, ParseException{
 				
 		int id = json.getInt("id");
 		Date birthday =	dbDateFormater.parse(json.getString("birthdate"));
@@ -42,7 +44,7 @@ public class JSONOperations {
 		String password = json.getString("password_md5");
 		String username = json.getString("username");
 		String photo = json.getString("photo");
-		Speciality spec = Speciality.Records.get(json.getInt("speciality_id"));
+		Speciality spec = SpecialityOperations.getSpeciality(context, json.getInt("speciality_id"));
 		return new Doctor(id,name,birthday,username,photo,spec,password);
 	}
 	
