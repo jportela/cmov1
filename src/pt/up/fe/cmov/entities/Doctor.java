@@ -12,6 +12,7 @@ public class Doctor extends Person {
 	
 	private String photo;
 	private Speciality speciality;
+	private String password_md5;
 	
 	public static final String DOCTOR_PHOTO = "photo";
 	public static final String DOCTOR_SPECIALITY = "speciality_id";
@@ -38,6 +39,14 @@ public class Doctor extends Person {
 		this.photo = photo;
 		this.speciality = speciality;
 	}
+	
+	public Doctor(int id, String name, Date birthDate, String username, String photo, Speciality speciality,String password_md5) {
+		super(id,name,birthDate,username);
+		this.photo = photo;
+		this.speciality = speciality;
+		this.password_md5 = password_md5;
+	}
+	
 	public String getPhoto() {
 		return photo;
 	}
@@ -47,8 +56,13 @@ public class Doctor extends Person {
 	public Speciality getSpeciality() {
 		return speciality;
 	}
+	
 	public void setSpeciality(Speciality speciality) {
 		this.speciality = speciality;
+	}
+	
+	public String getPassword(){
+		return this.password_md5;
 	}
 
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <LinearLayout android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+    	<ImageView
+    		android:layout_width="fill_parent"
+    		android:layout_gravity="left"
+    		android:src="@drawable/stethoscope"
+    		android:background="@android:color/white" android:layout_height="match_parent"/>
+    </LinearLayout>
+    <LinearLayout android:id="@+id/linearLayout2" android:background="@android:color/white" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
+        <TextView android:textColor="#000" android:id="@+id/username" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Username" 
+        android:textAppearance="?android:attr/textAppearanceLarge" android:paddingTop="2dip"></TextView>
+        <AutoCompleteTextView android:layout_height="wrap_content" android:layout_width="match_parent" android:text="" android:id="@+id/usernameField" android:paddingTop="2dip">
+            <requestFocus></requestFocus>
+        </AutoCompleteTextView>
+        <TextView android:id="@+id/password" android:textColor="#000" android:paddingTop="2dip" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Password" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+        <EditText android:layout_height="wrap_content" android:paddingTop="2dip" android:layout_width="match_parent" android:id="@+id/passwordField" android:inputType="textPassword"></EditText>
+        <LinearLayout android:id="@+id/linearLayout3" android:layout_weight="1" android:layout_width="match_parent" android:orientation="vertical" android:layout_height="match_parent">
+        </LinearLayout>
+        <LinearLayout android:id="@+id/linearLayout4" android:layout_weight="1" android:layout_width="match_parent" android:orientation="vertical" android:layout_height="match_parent">
+            <Button android:layout_height="wrap_content" android:layout_width="match_parent" android:text="Ok" android:id="@+id/loginConfirmation"></Button>
+        </LinearLayout>
+    </LinearLayout>
+    
+    
+</LinearLayout>
