@@ -22,7 +22,7 @@ public class SystemContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String SYSTEM_TABLE_NAME = "system";
 
@@ -35,9 +35,11 @@ public class SystemContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/system");	
 
     public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.system";
-    
+     
     private static HashMap<String, String> systemProjectionMap;
     
+    public static final String SYSTEM_ID = "_id";
+
     public static final String SYSTEM_LAST_SYNC = "last_sync";
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -48,7 +50,9 @@ public class SystemContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + SYSTEM_TABLE_NAME + " ( " + SYSTEM_LAST_SYNC + " DATETIME);");
+            db.execSQL("CREATE TABLE " + SYSTEM_TABLE_NAME + " ( " + SYSTEM_ID +
+            		" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+            		SYSTEM_LAST_SYNC + " DATETIME);");
         }
 
         @Override
@@ -120,14 +124,7 @@ public class SystemContentProvider extends ContentProvider {
         qb.setProjectionMap(systemProjectionMap);
         Cursor c = null;
 
-        switch (sUriMatcher.match(uri)) {
-            case SYSTEM:
-                c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown URI " + uri);
-        }
+        c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
@@ -154,6 +151,7 @@ public class SystemContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, SYSTEM_TABLE_NAME, SYSTEM);
 
         systemProjectionMap = new HashMap<String, String>();
+        systemProjectionMap.put(SYSTEM_ID, SYSTEM_ID);
         systemProjectionMap.put(SYSTEM_LAST_SYNC, SYSTEM_LAST_SYNC);
     }
 }

@@ -2,8 +2,6 @@ package pt.up.fe.cmov.providers;
 
 import java.util.HashMap;
 
-import pt.up.fe.cmov.entities.Doctor;
-import pt.up.fe.cmov.entities.Person;
 import pt.up.fe.cmov.entities.Speciality;
 import android.content.ContentProvider;
 import android.content.ContentUris;

@@ -1,11 +1,14 @@
 package pt.up.fe.cmov.operations;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.rest.JSONOperations;
 import pt.up.fe.cmov.rest.RailsRestClient;
@@ -18,13 +21,14 @@ import android.util.Log;
 
 public class SchedulePlanOperations {
 	
-public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
+	public static final String SCHEDULE_PLAN_CONTROLLER = "schedule_plans";
+	public static final String SCHEDULE_CONTROLLER = "schedules";
 	
 	
 	public static boolean createSchedulePlan(Context context, SchedulePlan schedulePlan){
 		
 		try{	
-			RailsRestClient.Post(SCHEDULEPLAN_CONTROLER, JSONOperations.schedulePlanToJSON(schedulePlan));
+			RailsRestClient.Post(SCHEDULE_PLAN_CONTROLLER, JSONOperations.schedulePlanToJSON(schedulePlan));
 		}catch(Exception e){
 			e.printStackTrace();
 			Log.w("NO Internet", "You don't have a internet connection");
@@ -46,7 +50,7 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 	public static boolean updateSchedulePlan(Context context, SchedulePlan schedulePlan){
 		
 		try{			
-			RailsRestClient.Put(SCHEDULEPLAN_CONTROLER,Integer.toString(schedulePlan.getId()), JSONOperations.schedulePlanToJSON(schedulePlan));
+			RailsRestClient.Put(SCHEDULE_PLAN_CONTROLLER,Integer.toString(schedulePlan.getId()), JSONOperations.schedulePlanToJSON(schedulePlan));
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -67,7 +71,7 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 	public static boolean deleteSchedulePlan(Context context, SchedulePlan schedulePlan){
 		
 		try{
-			RailsRestClient.Delete(SCHEDULEPLAN_CONTROLER, Integer.toString(schedulePlan.getId()));
+			RailsRestClient.Delete(SCHEDULE_PLAN_CONTROLLER, Integer.toString(schedulePlan.getId()));
 		}catch(Exception e){
 			e.printStackTrace();
 			Log.w("NO Internet", "You don't have a internet connection");
@@ -83,8 +87,8 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 		}
 	} 
 	
-	public static SchedulePlan getRemoteServerDoctor(Context context, int id){
-		JSONObject json = RailsRestClient.Get(SCHEDULEPLAN_CONTROLER + "/" + Integer.toString(id));
+	public static SchedulePlan getRemoteServerSchedulePlan(Context context, int id){
+		JSONObject json = RailsRestClient.Get(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(id));
 		try {
 			 return JSONOperations.JSONToSchedulePlan(json);
 		} catch (JSONException e) {
@@ -95,7 +99,7 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 		return null;
 	}
 	
-	public static SchedulePlan getDoctor(Context context, int id) {
+	public static SchedulePlan getSchedulePlan(Context context, int id) {
 				
 		Uri querySchedulePlanUri = ContentUris.withAppendedId(SchedulePlan.CONTENT_URI, id); 
 		Cursor cSchedulePlan = context.getContentResolver().query(querySchedulePlanUri, null, null, null, null); 
@@ -107,5 +111,25 @@ public static final String SCHEDULEPLAN_CONTROLER = "schedule_plans";
 			} 
 		cSchedulePlan.close();
 		return sch;
+	}
+	
+	public static ArrayList<Schedule> getRemoteSchedules(Context context, int schedulePlanId) {
+		JSONArray jsonArray = RailsRestClient.GetArray(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER);
+		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
+		
+		for (int i=0; i < jsonArray.length(); i++) {
+			try {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				Schedule schedule = JSONOperations.JSONToSchedule(obj);
+				schedules.add(schedule);
+				Log.i("SCHEDULE", schedule.getStartDate().toString() + "---" + schedule.getEndDate().toString());
+			} catch (JSONException e) {
+				Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
+			} catch (ParseException e) {
+				Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
+			}
+		}
+		
+		return schedules;
 	}
 }

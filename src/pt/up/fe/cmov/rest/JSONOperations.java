@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
+import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
 
@@ -115,9 +116,15 @@ public class JSONOperations {
 	}
 	
 	public static Speciality JSONToSpeciality(JSONObject json) throws JSONException, ParseException{
-				
 		int id = json.getInt("id");
 		String name = json.getString("name");
 		return new Speciality(id,name);
+	}
+
+	public static Schedule JSONToSchedule(JSONObject json) throws JSONException, ParseException{
+		int id = json.getInt("id");
+		Date startDate = dbDateFormater.parse(json.getString(Schedule.SCHEDULE_START_DATE));
+		Date endDate = dbDateFormater.parse(json.getString(Schedule.SCHEDULE_END_DATE));
+		return new Schedule(id, startDate, endDate);
 	}
 }

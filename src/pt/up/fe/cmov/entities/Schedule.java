@@ -9,22 +9,20 @@ import pt.up.fe.cmov.providers.ScheduleContentProvider;
 public class Schedule implements Comparable<Schedule>{
 	
 	private int id,schedule_plan_id;
-	private Date startHour,endHour,dateTime;
+	private Date startDate,endDate;
 	
 	public static final String 	SCHEDULE_ID = "_id";
-	public static final String 	SCHEDULE_STARHOUR = "start_hour";
-	public static final String 	SCHEDULE_ENDHOUR = "end_hour";
-	public static final String 	SCHEDULE_DATETIME = "date_time";
+	public static final String 	SCHEDULE_START_DATE = "start_date";
+	public static final String 	SCHEDULE_END_DATE = "end_date";
 	public static final String 	SCHEDULE_PLAN_ID = "schedule_plan_id";
 	
 	public static final Uri CONTENT_URI = Uri.parse("content://" + ScheduleContentProvider.AUTHORITY + "/schedules");	
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.schedules";
 	
-	public Schedule(int id, Date startHour, Date endHour, Date dateTime){
+	public Schedule(int id, Date startDate, Date endDate){
 		this.id = id;
-		this.endHour = endHour;
-		this.startHour = startHour;
-		this.dateTime = dateTime;
+		this.endDate = endDate;
+		this.startDate = startDate;
 	}
 	
 	public int getId(){
@@ -35,18 +33,13 @@ public class Schedule implements Comparable<Schedule>{
 		return this.schedule_plan_id;
 	}
 	
-	public Date getStartHour(){
-		return this.startHour;
+	public Date getStartDate(){
+		return this.startDate;
 	}
 	
-	public Date getEndHour(){
-		return this.endHour;
+	public Date getEndDate(){
+		return this.endDate;
 	}
-	
-	public Date getDateTime(){
-		return this.dateTime;
-	}
-	
 
 	public void setId(int id){
 		this.id = id;
@@ -56,32 +49,27 @@ public class Schedule implements Comparable<Schedule>{
 		this.schedule_plan_id = schedule_plan_id;
 	}
 	
-	public void setStarHour(Date startHour){
-		this.startHour = startHour;
+	public void setStarDate(Date startDate){
+		this.startDate = startDate;
 	}
 	
-	public void setEndHour(Date endHour){
-		this.endHour = endHour;
-	}
-	
-	public void setDatetime(Date dateTime){
-		this.dateTime = dateTime;
+	public void setEndDate(Date endDate){
+		this.endDate = endDate;
 	}
 
 	@Override
 	public int compareTo(Schedule another) {
-		if(this.dateTime.equals(another.dateTime)){
-			if(another.getStartHour().after(this.startHour) && another.getStartHour().before(this.endHour))
-				return 1;
-			if(this.startHour.equals(another.getStartHour()) || another.getStartHour().equals(this.endHour)) 
-				return 1;
-			if(this.endHour.equals(another.getStartHour()) || another.getEndHour().equals(this.startHour)) 
-				return 1;
-			if(another.getEndHour().before(this.endHour) && another.getEndHour().after(this.startHour))
-				return 1;
-			if(another.getStartHour().before(this.startHour) && another.getEndHour().after(this.endHour))
-				return 1;
-		}	
+		if(another.getStartDate().after(this.startDate) && another.getStartDate().before(this.endDate))
+			return 1;
+		if(this.startDate.equals(another.getStartDate()) || another.getStartDate().equals(this.endDate)) 
+			return 1;
+		if(this.endDate.equals(another.getStartDate()) || another.getEndDate().equals(this.startDate)) 
+			return 1;
+		if(another.getEndDate().before(this.endDate) && another.getEndDate().after(this.startDate))
+			return 1;
+		if(another.getStartDate().before(this.startDate) && another.getEndDate().after(this.endDate))
+			return 1;
+		
 		return 0;
 	}
 }
