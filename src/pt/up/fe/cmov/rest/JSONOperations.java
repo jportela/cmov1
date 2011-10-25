@@ -37,12 +37,13 @@ public class JSONOperations {
 	public static Doctor JSONToDoctor(JSONObject json) throws JSONException, ParseException{
 				
 		int id = json.getInt("id");
-		Date birthday =	dbDateFormater.parse(json.getString("birthday"));
+		Date birthday =	dbDateFormater.parse(json.getString("birthdate"));
 		String name = json.getString("name");
+		String password = json.getString("password_md5");
 		String username = json.getString("username");
 		String photo = json.getString("photo");
 		Speciality spec = Speciality.Records.get(json.getInt("speciality_id"));
-		return new Doctor(id,name,birthday,username,photo,spec);
+		return new Doctor(id,name,birthday,username,photo,spec,password);
 	}
 	
 	public static JSONObject patientToJSON(Patient patient) throws JSONException{
@@ -62,7 +63,7 @@ public class JSONOperations {
 	public static Patient JSONToPatient(JSONObject json) throws JSONException, ParseException{
 				
 		int id = json.getInt("id");
-		Date birthday =	dbDateFormater.parse(json.getString("birthday"));
+		Date birthday =	dbDateFormater.parse(json.getString("birthdate"));
 		String name = json.getString("name");
 		String username = json.getString("username");
 		String photo = json.getString("address");

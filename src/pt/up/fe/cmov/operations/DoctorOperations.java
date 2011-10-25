@@ -1,7 +1,10 @@
 package pt.up.fe.cmov.operations;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -119,7 +122,32 @@ public class DoctorOperations {
 			} 
 		cDoctor.close();
 		return d;
-		
-
 	}
+	
+	public static ArrayList<Doctor> queryDoctorsRemoteServer() throws JSONException, ParseException{
+        ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
+        JSONArray jsonArrays = RailsRestClient.GetArray("doctors");
+        for(int i = 0; i < jsonArrays.length();i++){
+        	queryDoctors.add(JSONOperations.JSONToDoctor(jsonArrays.getJSONObject(i)));
+        }
+        return queryDoctors;
+     }
+		
+	public static ArrayList<Doctor> queryDoctors(Context context, String selection, String[] selectedArguments, String order){
+        ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
+        Cursor cDoctor = context.getContentResolver().query(Doctor.CONTENT_URI, null, selection, selectedArguments, order); 
+        while (cDoctor.moveToNext()) { 
+                 String id = cDoctor.getString( cDoctor.getColumnIndex(Doctor.PERSON_ID)); 
+                 String password = cDoctor.getString(cDoctor.getColumnIndex("password_md5"));
+                 String birthdate = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_BIRTHDATE));
+                 String name = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_NAME));
+                 String username = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_USERNAME)); 
+                 String photo = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_PHOTO)); 
+                 String specialityId = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
+                 queryDoctors.add(new Doctor(Integer.parseInt(id),name,new Date(birthdate),username,photo,
+                                        Speciality.Records.get(Integer.parseInt(specialityId)),password));
+         } 
+        cDoctor.close();
+        return queryDoctors;
+     }
 }
