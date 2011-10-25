@@ -87,7 +87,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
         		if(!login){
         			Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
         		}else{
-        			Intent k = new Intent(LoginActivity.this, Cmov1_doctorActivity.class);
+        			Intent k = new Intent(LoginActivity.this, DoctorActivity.class);
         			startActivity(k);
         		}
         }

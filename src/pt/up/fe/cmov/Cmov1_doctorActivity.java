@@ -1,11 +1,10 @@
 package pt.up.fe.cmov;
 
-import pt.up.fe.cmov.rest.RemoteSync;
-import pt.up.fe.cmov.operations.SchedulePlanOperations;
+
 import android.app.Activity;
 import android.os.Bundle;
 
-public class Cmov1_doctorActivity extends Activity {
+public class Cmov1_doctorActivity extends Activity{
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {

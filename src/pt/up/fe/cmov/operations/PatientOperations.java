@@ -20,7 +20,7 @@ public class PatientOperations {
 	
 	public static final String PATIENT_CONTROLER = "patients";
 	
-	public static boolean createDoctor(Context context, Patient patient){
+	public static boolean createPatient(Context context, Patient patient){
 		
 		try{	
 			RailsRestClient.Post(PATIENT_CONTROLER, JSONOperations.patientToJSON(patient));
@@ -45,7 +45,7 @@ public class PatientOperations {
 		return (uri != null);
 	}
 	
-	public static boolean updateDoctor(Context context, Patient patient){
+	public static boolean updatePatient(Context context, Patient patient){
 		
 		try{			
 			RailsRestClient.Put(PATIENT_CONTROLER,Integer.toString(patient.getId()), JSONOperations.patientToJSON(patient));
@@ -70,7 +70,7 @@ public class PatientOperations {
 		return true;
 	}
 		
-	public static boolean deleteDoctor(Context context, Patient patient){
+	public static boolean deletePatient(Context context, Patient patient){
 		
 		try{
 			RailsRestClient.Delete(PATIENT_CONTROLER, Integer.toString(patient.getId()));
@@ -89,7 +89,7 @@ public class PatientOperations {
 		}
 	} 
 	
-	public static Patient getRemoteServerDoctor(Context context, int id){
+	public static Patient getRemoteServerPatient(int id){
 		JSONObject json = RailsRestClient.Get(PATIENT_CONTROLER + "/" + Integer.toString(id));
 		try {
 			 return JSONOperations.JSONToPatient(json);
@@ -101,7 +101,7 @@ public class PatientOperations {
 		return null;
 	}
 	
-	public static Patient getDoctor(Context context, int id) {
+	public static Patient getPatient(Context context, int id) {
 				
 		Uri queryPatientUri = ContentUris.withAppendedId(Patient.CONTENT_URI, id); 
 		Cursor cPatient = context.getContentResolver().query(queryPatientUri, null, null, null, null); 
