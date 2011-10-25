@@ -70,6 +70,7 @@ public class RemoteSync {
 	private static boolean syncSpecialities(Context context, Date lastSyncTime) {
 		String dateStr = "";
 		if (lastSyncTime != null) {
+			lastSyncTime.setHours(lastSyncTime.getHours()-1);
 			dateStr = JSONOperations.dbDateFormater.format(lastSyncTime);
 		}
 		

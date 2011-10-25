@@ -37,7 +37,7 @@ public class SpecialityOperations {
 		return true;
 	}
 		
-	public static boolean deleteDoctor(Context context, Speciality speciality){
+	public static boolean deleteSpeciality(Context context, Speciality speciality){
 		
 		Uri deleteUri = ContentUris.withAppendedId(Speciality.CONTENT_URI, speciality.getId());
 		try{
@@ -53,6 +53,8 @@ public class SpecialityOperations {
 				
 		Uri queryUri = ContentUris.withAppendedId(Speciality.CONTENT_URI, id); 
 		Cursor c = context.getContentResolver().query(queryUri, null, null, null, null); 
+		if (c == null)
+			return null;
 		Speciality s = null;
 		if (c.moveToNext()) { 
 			   String name = c.getString(c.getColumnIndex(Speciality.SPECIALITY_NAME));

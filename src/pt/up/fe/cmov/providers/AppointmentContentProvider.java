@@ -23,7 +23,7 @@ public class AppointmentContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String APPOINTMENT_TABLE_NAME = "appointments";
 
