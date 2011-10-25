@@ -1,6 +1,5 @@
 package pt.up.fe.cmov.operations;
 
-import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Speciality;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -12,8 +11,6 @@ import android.util.Log;
 public class SpecialityOperations {
 	
 	public static boolean createSpeciality(Context context, Speciality speciality){
-		
-				
 		ContentValues values = new ContentValues();
 		
 		if (speciality.getId() > 0) {
@@ -54,15 +51,23 @@ public class SpecialityOperations {
 	
 	public static Speciality getSpeciality(Context context, int id) {
 				
-		Uri queryUri = ContentUris.withAppendedId(Patient.CONTENT_URI, id); 
+		Uri queryUri = ContentUris.withAppendedId(Speciality.CONTENT_URI, id); 
 		Cursor c = context.getContentResolver().query(queryUri, null, null, null, null); 
 		Speciality s = null;
 		if (c.moveToNext()) { 
-			   String name = c.getString(c.getColumnIndex(Patient.PERSON_NAME));
+			   String name = c.getString(c.getColumnIndex(Speciality.SPECIALITY_NAME));
 			   s = new Speciality(id,name);
 			} 
 		c.close();
 		return s;
 	}
-
+	
+	public static void createOrUpdateSpeciality(Context context, Speciality speciality) {
+		if (getSpeciality(context, speciality.getId()) == null) {
+			createSpeciality(context, speciality);
+		}
+		else {
+			updateSpeciality(context, speciality);
+		}
+	}
 }

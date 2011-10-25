@@ -79,7 +79,7 @@ public class RemoteSync {
 				
 				JSONObject record = (JSONObject) specialitiesList.get(i);
 				Speciality speciality = JSONOperations.JSONToSpeciality(record);
-				SpecialityOperations.createSpeciality(context, speciality);
+				SpecialityOperations.createOrUpdateSpeciality(context, speciality);
 				Log.i("CMOV_SYNC", "Speciality " + speciality.getId() + ": " + speciality.getName());
 			}
 		} catch (JSONException e) {

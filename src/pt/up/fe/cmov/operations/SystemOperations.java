@@ -30,7 +30,7 @@ public class SystemOperations {
 	public static void updateLastSync(Context context, Date lastSyncTime, Date newSync) {
 		ContentValues values = new ContentValues();
 		
-		values.put(SystemContentProvider.SYSTEM_LAST_SYNC, JSONOperations.dbDateFormater.format(newSync.getTime()));
+		values.put(SystemContentProvider.SYSTEM_LAST_SYNC, newSync.toString());
 		
 		if (lastSyncTime == null)
 		{

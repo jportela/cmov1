@@ -23,7 +23,7 @@ public class SpecialityContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 1;
 
     private static final String SPECIALITIES_TABLE_NAME = "specialities";
 

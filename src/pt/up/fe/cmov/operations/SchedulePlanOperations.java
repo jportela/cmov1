@@ -132,4 +132,8 @@ public class SchedulePlanOperations {
 		
 		return schedules;
 	}
+	
+	public static boolean createOrUpdateSchedulePlan(Context context, int schedulePlanId) {
+		return false;
+	}
 }

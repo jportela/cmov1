@@ -1,6 +1,6 @@
 package pt.up.fe.cmov;
 
-import pt.up.fe.cmov.operations.SchedulePlanOperations;
+import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -34,8 +34,8 @@ public class Cmov1_doctorActivity extends Activity {
 		    //	Doctor d = doctors.get(i);
 		    //	Log.i("DOCTOR", d.getName());
 		    //}
-		    //RemoteSync.oneClickSync(this, null);
-        	SchedulePlanOperations.getRemoteSchedules(this, 1);
+		    RemoteSync.oneClickSync(this, null);
+        	//SchedulePlanOperations.getRemoteSchedules(this, 1);
         }
         catch (Exception e) {
         	e.printStackTrace();
