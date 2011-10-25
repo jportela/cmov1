@@ -62,7 +62,6 @@ public class Speciality {
 				}
 				SpecialityList.isPopulated = true;
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -17,7 +17,7 @@ public class SystemOperations {
 		if (c.moveToNext()) { 
 			String dateStr = c.getString(c.getColumnIndex(SystemContentProvider.SYSTEM_LAST_SYNC));
 			try {
-				lastSync = JSONOperations.dbDateFormater.parse(dateStr);
+				lastSync = JSONOperations.dbDateTimeZoneFormater.parse(dateStr);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -30,7 +30,7 @@ public class SystemOperations {
 	public static void updateLastSync(Context context, Date lastSyncTime, Date newSync) {
 		ContentValues values = new ContentValues();
 		
-		values.put(SystemContentProvider.SYSTEM_LAST_SYNC, JSONOperations.dbDateFormater.format(newSync.getTime()));
+		values.put(SystemContentProvider.SYSTEM_LAST_SYNC, JSONOperations.dbDateTimeZoneFormater.format(newSync));
 		
 		if (lastSyncTime == null)
 		{

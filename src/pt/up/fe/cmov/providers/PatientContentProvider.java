@@ -25,7 +25,7 @@ public class PatientContentProvider extends ContentProvider {
 
 	 private static final String DATABASE_NAME = "pclinic.db";
 
-	 private static final int DATABASE_VERSION = 1;
+	 private static final int DATABASE_VERSION = 4;
 
 	 private static final String PATIENTS_TABLE_NAME = "patients";
 

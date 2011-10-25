@@ -70,6 +70,7 @@ public class RemoteSync {
 	private static boolean syncSpecialities(Context context, Date lastSyncTime) {
 		String dateStr = "";
 		if (lastSyncTime != null) {
+			lastSyncTime.setHours(lastSyncTime.getHours()-1);
 			dateStr = JSONOperations.dbDateFormater.format(lastSyncTime);
 		}
 		
@@ -79,7 +80,7 @@ public class RemoteSync {
 				
 				JSONObject record = (JSONObject) specialitiesList.get(i);
 				Speciality speciality = JSONOperations.JSONToSpeciality(record);
-				SpecialityOperations.createSpeciality(context, speciality);
+				SpecialityOperations.createOrUpdateSpeciality(context, speciality);
 				Log.i("CMOV_SYNC", "Speciality " + speciality.getId() + ": " + speciality.getName());
 			}
 		} catch (JSONException e) {

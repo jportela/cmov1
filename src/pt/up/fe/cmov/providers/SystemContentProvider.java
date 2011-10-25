@@ -22,7 +22,7 @@ public class SystemContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 1;
 
     private static final String SYSTEM_TABLE_NAME = "system";
 
@@ -52,7 +52,7 @@ public class SystemContentProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + SYSTEM_TABLE_NAME + " ( " + SYSTEM_ID +
             		" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-            		SYSTEM_LAST_SYNC + " DATETIME);");
+            		SYSTEM_LAST_SYNC + " VARCHAR(255));");
         }
 
         @Override
@@ -119,7 +119,7 @@ public class SystemContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         qb.setTables(SYSTEM_TABLE_NAME);
         qb.setProjectionMap(systemProjectionMap);
         Cursor c = null;
