@@ -1,14 +1,8 @@
 package pt.up.fe.cmov;
 
-import java.util.ArrayList;
-
-import pt.up.fe.cmov.entities.Doctor;
-import pt.up.fe.cmov.entities.Speciality;
-import pt.up.fe.cmov.operations.DoctorOperations;
-import pt.up.fe.cmov.rest.RemoteSync;
+import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 
 public class Cmov1_doctorActivity extends Activity {
     /** Called when the activity is first created. */
@@ -40,7 +34,8 @@ public class Cmov1_doctorActivity extends Activity {
 		    //	Doctor d = doctors.get(i);
 		    //	Log.i("DOCTOR", d.getName());
 		    //}
-		    RemoteSync.oneClickSync(this, null);
+		    //RemoteSync.oneClickSync(this, null);
+        	SchedulePlanOperations.getRemoteSchedules(this, 1);
         }
         catch (Exception e) {
         	e.printStackTrace();

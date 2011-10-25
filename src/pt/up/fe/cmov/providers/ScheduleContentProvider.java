@@ -23,7 +23,7 @@ public class ScheduleContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String SCHEDULE_TABLE_NAME = "schedules";
 
@@ -46,8 +46,7 @@ public class ScheduleContentProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + SCHEDULE_TABLE_NAME + " (" + Schedule.SCHEDULE_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Schedule.SCHEDULE_DATETIME 
-                    + " DATETIME," + Schedule.SCHEDULE_STARHOUR + " DATETIME," + Schedule.SCHEDULE_ENDHOUR + " DATETIME,"
+                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Schedule.SCHEDULE_START_DATE + " DATETIME," + Schedule.SCHEDULE_END_DATE + " DATETIME,"
                     + Schedule.SCHEDULE_PLAN_ID + " INTEGER);"); 
         }
 
@@ -174,8 +173,8 @@ public class ScheduleContentProvider extends ContentProvider {
 
         scheduleProjectionMap = new HashMap<String, String>();
         scheduleProjectionMap.put(Schedule.SCHEDULE_ID, Schedule.SCHEDULE_ID);
-        scheduleProjectionMap.put(Schedule.SCHEDULE_STARHOUR, Schedule.SCHEDULE_STARHOUR);
-        scheduleProjectionMap.put(Schedule.SCHEDULE_ENDHOUR,Schedule.SCHEDULE_ENDHOUR);
+        scheduleProjectionMap.put(Schedule.SCHEDULE_START_DATE, Schedule.SCHEDULE_START_DATE);
+        scheduleProjectionMap.put(Schedule.SCHEDULE_END_DATE,Schedule.SCHEDULE_END_DATE);
         scheduleProjectionMap.put(Schedule.SCHEDULE_PLAN_ID,Schedule.SCHEDULE_PLAN_ID);
     }
 
