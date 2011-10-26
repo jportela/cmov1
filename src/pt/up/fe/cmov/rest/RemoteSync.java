@@ -7,8 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.operations.SystemOperations;
 import android.content.Context;
@@ -32,7 +34,7 @@ public class RemoteSync {
 			
 			boolean needsUpdate = false;
 			needsUpdate |= syncSpecialities(context, lastSyncTime);
-			needsUpdate |= syncDoctors(lastSyncTime);
+			needsUpdate |= syncDoctors(context, lastSyncTime);
 			needsUpdate |= syncSchedules(lastSyncTime);
 			
 			if (patient != null) {
@@ -61,27 +63,21 @@ public class RemoteSync {
 		
 	}
 
-	private static boolean syncDoctors(Date lastSyncTime) {
-		// TODO Auto-generated method stub
-		return false;
+	private static boolean syncDoctors(Context context, Date lastSyncTime) {
+		String dateStr = getServerDateString(lastSyncTime);
 		
-	}
-
-	private static boolean syncSpecialities(Context context, Date lastSyncTime) {
-		String dateStr = "";
-		if (lastSyncTime != null) {
-			lastSyncTime.setHours(lastSyncTime.getHours()-1);
-			dateStr = JSONOperations.dbDateFormater.format(lastSyncTime);
-		}
+		boolean needsUpdate = false;
 		
-		JSONArray specialitiesList = RailsRestClient.GetArray("doctors/specialities/updated", "time="+dateStr);
+		JSONArray doctorsList = RailsRestClient.GetArray("doctors/updated", "time="+dateStr);
+		
 		try {
-			for (int i=0; i < specialitiesList.length(); i++) {
+			for (int i=0; i < doctorsList.length(); i++) {
 				
-				JSONObject record = (JSONObject) specialitiesList.get(i);
-				Speciality speciality = JSONOperations.JSONToSpeciality(record);
-				SpecialityOperations.createOrUpdateSpeciality(context, speciality);
-				Log.i("CMOV_SYNC", "Speciality " + speciality.getId() + ": " + speciality.getName());
+				JSONObject record = (JSONObject) doctorsList.get(i);
+				Doctor doctor = JSONOperations.JSONToDoctor(context, record);
+				DoctorOperations.createOrUpdateDoctor(context, doctor);
+				Log.i("CMOV_SYNC", "Speciality " + doctor.getId() + ": " + doctor.getName());
+				needsUpdate = true;
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -90,7 +86,35 @@ public class RemoteSync {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return needsUpdate;
+		
+	}
+
+	private static boolean syncSpecialities(Context context, Date lastSyncTime) {
+		
+		String dateStr = getServerDateString(lastSyncTime);
+		
+		boolean needsUpdate = false;
+		
+		JSONArray specialitiesList = RailsRestClient.GetArray("doctors/specialities/updated", "time="+dateStr);
+		
+		try {
+			for (int i=0; i < specialitiesList.length(); i++) {
+				
+				JSONObject record = (JSONObject) specialitiesList.get(i);
+				Speciality speciality = JSONOperations.JSONToSpeciality(record);
+				SpecialityOperations.createOrUpdateSpeciality(context, speciality);
+				Log.i("CMOV_SYNC", "Speciality " + speciality.getId() + ": " + speciality.getName());
+				needsUpdate = true;
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return needsUpdate;
 		
 	}
 
@@ -103,6 +127,15 @@ public class RemoteSync {
 			Log.e("REST", "No connection with the server");
 		}
 		return null;
+	}
+	
+	private static String getServerDateString(Date date) {
+		String dateStr = "";
+		if (date != null) {
+			date.setHours(date.getHours()-1);	//adjusts timezone of rails server
+			dateStr = JSONOperations.dbDateFormater.format(date);
+		}
+		return dateStr;
 	}
 	
 

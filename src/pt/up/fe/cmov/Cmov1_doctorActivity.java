@@ -35,7 +35,7 @@ public class Cmov1_doctorActivity extends Activity{
 		    //	Log.i("DOCTOR", d.getName());
 		    //}
         	//SchedulePlanOperations.getRemoteSchedules(this, 1);
-		    //RemoteSync.oneClickSync(this, null);
+		    RemoteSync.oneClickSync(this, null);
         }
         catch (Exception e) {
         	e.printStackTrace();

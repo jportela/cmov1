@@ -25,15 +25,17 @@ public class DoctorOperations {
 	public static final String DOCTOR_CONTROLER = "doctors";
 	
 	
-	public static boolean createDoctor(Context context, Doctor doctor){
+	public static boolean createDoctor(Context context, Doctor doctor, boolean isRemote){
 		
-		try{	
-			RailsRestClient.Post(DOCTOR_CONTROLER, JSONOperations.doctorToJSON(doctor));
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+		if (isRemote) {
+			try{	
+				RailsRestClient.Post(DOCTOR_CONTROLER, JSONOperations.doctorToJSON(doctor));
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
-				
+		
 		ContentValues values = new ContentValues();
 		
 		if (doctor.getId() > 0) {
@@ -50,14 +52,16 @@ public class DoctorOperations {
 		return (uri != null);
 	}
 	
-	public static boolean updateDoctor(Context context, Doctor doctor){
+	public static boolean updateDoctor(Context context, Doctor doctor, boolean isRemote){
 		
-		try{			
-			RailsRestClient.Put(DOCTOR_CONTROLER,Integer.toString(doctor.getId()), JSONOperations.doctorToJSON(doctor));
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+		if (isRemote) {
+			try{			
+				RailsRestClient.Put(DOCTOR_CONTROLER,Integer.toString(doctor.getId()), JSONOperations.doctorToJSON(doctor));
+				
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
 		
 		ContentValues values = new ContentValues();
@@ -75,13 +79,14 @@ public class DoctorOperations {
 		return true;
 	}
 		
-	public static boolean deleteDoctor(Context context, Doctor doctor){
-		
-		try{
-			RailsRestClient.Delete(DOCTOR_CONTROLER, Integer.toString(doctor.getId()));
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+	public static boolean deleteDoctor(Context context, Doctor doctor, boolean isRemote){
+		if (isRemote) {
+			try{
+				RailsRestClient.Delete(DOCTOR_CONTROLER, Integer.toString(doctor.getId()));
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
 		
 		Uri deleteDoctorUri = ContentUris.withAppendedId(Doctor.CONTENT_URI, doctor.getId()); 
@@ -97,7 +102,7 @@ public class DoctorOperations {
 	public static Doctor getRemoteServerDoctor(Context context, int id){
 		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(id));
 		try {
-			 return JSONOperations.JSONToDoctor(json);
+			 return JSONOperations.JSONToDoctor(context, json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -124,11 +129,11 @@ public class DoctorOperations {
 		return d;
 	}
 	
-	public static ArrayList<Doctor> queryDoctorsRemoteServer() throws JSONException, ParseException{
+	public static ArrayList<Doctor> queryDoctorsRemoteServer(Context context) throws JSONException, ParseException{
         ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
         JSONArray jsonArrays = RailsRestClient.GetArray("doctors");
         for(int i = 0; i < jsonArrays.length();i++){
-        	queryDoctors.add(JSONOperations.JSONToDoctor(jsonArrays.getJSONObject(i)));
+        	queryDoctors.add(JSONOperations.JSONToDoctor(context, jsonArrays.getJSONObject(i)));
         }
         return queryDoctors;
      }
@@ -150,4 +155,13 @@ public class DoctorOperations {
         cDoctor.close();
         return queryDoctors;
      }
+
+	public static void createOrUpdateDoctor(Context context, Doctor doctor) {
+		if (getDoctor(context, doctor.getId()) == null) {
+			createDoctor(context, doctor, false);
+		}
+		else {
+			updateDoctor(context, doctor, false);
+		}		
+	}
 }
