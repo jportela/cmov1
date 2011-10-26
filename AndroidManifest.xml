@@ -4,17 +4,20 @@
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="8" />
+    
+    
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".Cmov1_doctorActivity"
-                  android:label="@string/app_name">
+        <activity android:name=".LoginActivity"
+                  android:label="@string/app_name" android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".LoginActivity"> </activity>
+
+        <activity android:name=".Cmov1_doctorActivity"> </activity>
+        <activity android:name=".DoctorActivity" android:theme="@android:style/Theme.Light"> </activity>
         
         <provider android:name=".providers.DoctorContentProvider"
          android:authorities="pt.up.fe.cmov.common.providers.doctorcontentprovider" />   

@@ -12,7 +12,7 @@
     		android:background="@android:color/white" android:layout_height="match_parent"/>
     </LinearLayout>
     <LinearLayout android:id="@+id/linearLayout2" android:background="@android:color/white" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
-        <TextView android:textColor="#000" android:id="@+id/username" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Username" 
+        <TextView android:id="@+id/username" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Username" 
         android:textAppearance="?android:attr/textAppearanceLarge" android:paddingTop="2dip"></TextView>
         <AutoCompleteTextView android:layout_height="wrap_content" android:layout_width="match_parent" android:text="" android:id="@+id/usernameField" android:paddingTop="2dip">
             <requestFocus></requestFocus>

@@ -21,7 +21,7 @@ public class AppointmentOperations {
 public static final String APPOINTMENT_CONTROLER = "appointments";
 	
 	
-	public static boolean createSchedulePlan(Context context, Appointment appointment){
+	public static boolean createAppointment(Context context, Appointment appointment){
 		
 		try{	
 			RailsRestClient.Post(APPOINTMENT_CONTROLER, JSONOperations.appointmentToJSON(appointment));
@@ -44,7 +44,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return (uri != null);
 	}
 	
-	public static boolean updateSchedulePlan(Context context, Appointment appointment){
+	public static boolean updateAppointment(Context context, Appointment appointment){
 		
 		try{			
 			RailsRestClient.Put(APPOINTMENT_CONTROLER,Integer.toString(appointment.getId()), JSONOperations.appointmentToJSON(appointment));
@@ -66,7 +66,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return true;
 	}
 		
-	public static boolean deleteSchedulePlan(Context context, Appointment appointment){
+	public static boolean deleteAppointment(Context context, Appointment appointment){
 		
 		try{
 			RailsRestClient.Delete(APPOINTMENT_CONTROLER, Integer.toString(appointment.getId()));
@@ -85,7 +85,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		}
 	} 
 	
-	public static Appointment getRemoteServerDoctor(Context context, int id){
+	public static Appointment getRemoteServerAppointment(Context context, int id){
 		JSONObject json = RailsRestClient.Get(APPOINTMENT_CONTROLER + "/" + Integer.toString(id));
 		try {
 			 return JSONOperations.JSONToAppointment(json);
@@ -97,7 +97,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return null;
 	}
 	
-	public static Appointment getDoctor(Context context, int id) {
+	public static Appointment getAppointment(Context context, int id) {
 				
 		Uri querySchedulePlanUri = ContentUris.withAppendedId(Appointment.CONTENT_URI, id); 
 		Cursor cAppointment = context.getContentResolver().query(querySchedulePlanUri, null, null, null, null); 
