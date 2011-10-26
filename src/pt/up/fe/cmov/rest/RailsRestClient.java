@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class RailsRestClient {
 	
-	public final static String SERVER_URL = "http://172.30.61.177:3000/";
+	public final static String SERVER_URL = "http://172.30.62.71:3000/";
 
 	//public final static String SERVER_URL = "http://172.30.59.203:3000/";
 

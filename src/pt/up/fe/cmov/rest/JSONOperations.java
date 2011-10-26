@@ -18,6 +18,7 @@ import pt.up.fe.cmov.entities.Speciality;
 public class JSONOperations {
 	
 	public static final DateFormat dbDateFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss");
+	public static final SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMM kk:mm");  
 	public static final DateFormat dbDateTimeZoneFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
 
 	public static JSONObject doctorToJSON(Doctor doctor) throws JSONException{

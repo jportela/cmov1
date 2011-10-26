@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, Cmov1_doctorActivity!</string>
     <string name="app_name">Cmov1_doctor</string>
+     <string name="next_appointment">Next Appointments</string>
 </resources>
