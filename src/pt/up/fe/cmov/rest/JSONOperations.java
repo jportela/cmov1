@@ -128,6 +128,19 @@ public class JSONOperations {
 		int id = json.getInt("id");
 		Date startDate = dbDateFormater.parse(json.getString(Schedule.SCHEDULE_START_DATE));
 		Date endDate = dbDateFormater.parse(json.getString(Schedule.SCHEDULE_END_DATE));
-		return new Schedule(id, startDate, endDate);
+		int schedulePlanId = json.getInt(Schedule.SCHEDULE_PLAN_ID);
+		Schedule schedule = new Schedule(id, startDate, endDate);
+		schedule.setSchedulePlanId(schedulePlanId);
+		return schedule;
+	}
+
+	public static JSONObject scheduleToJSON(Schedule schedule) throws JSONException, ParseException{
+		JSONObject obj = new JSONObject();
+		obj.put("id", schedule.getId());
+		obj.put(Schedule.SCHEDULE_START_DATE, dbDateFormater.format(schedule.getStartDate()));
+		obj.put(Schedule.SCHEDULE_END_DATE, dbDateFormater.format(schedule.getEndDate()));
+		obj.put(Schedule.SCHEDULE_PLAN_ID, schedule.getSchedulePlanId());
+
+		return obj;
 	}
 }

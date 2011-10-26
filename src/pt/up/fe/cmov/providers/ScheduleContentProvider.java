@@ -27,7 +27,7 @@ public class ScheduleContentProvider extends ContentProvider {
 
     private static final String SCHEDULE_TABLE_NAME = "schedules";
 
-    public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.schedulescontentprovider";
+    public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.schedulecontentprovider";
 
     private static final UriMatcher sUriMatcher;
 

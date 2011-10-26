@@ -25,15 +25,17 @@ public class SchedulePlanOperations {
 	public static final String SCHEDULE_CONTROLLER = "schedules";
 	
 	
-	public static boolean createSchedulePlan(Context context, SchedulePlan schedulePlan){
+	public static boolean createSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){
 		
-		try{	
-			RailsRestClient.Post(SCHEDULE_PLAN_CONTROLLER, JSONOperations.schedulePlanToJSON(schedulePlan));
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+		if (isRemote) {
+			try{	
+				RailsRestClient.Post(SCHEDULE_PLAN_CONTROLLER, JSONOperations.schedulePlanToJSON(schedulePlan));
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
-				
+		
 		ContentValues values = new ContentValues();
 		
 		if (schedulePlan.getId() > 0) {
@@ -47,14 +49,15 @@ public class SchedulePlanOperations {
 		return (uri != null);
 	}
 	
-	public static boolean updateSchedulePlan(Context context, SchedulePlan schedulePlan){
-		
-		try{			
-			RailsRestClient.Put(SCHEDULE_PLAN_CONTROLLER,Integer.toString(schedulePlan.getId()), JSONOperations.schedulePlanToJSON(schedulePlan));
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+	public static boolean updateSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){
+		if (isRemote) {
+			try{			
+				RailsRestClient.Put(SCHEDULE_PLAN_CONTROLLER,Integer.toString(schedulePlan.getId()), JSONOperations.schedulePlanToJSON(schedulePlan));
+				
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
 		
 		ContentValues values = new ContentValues();
@@ -68,13 +71,14 @@ public class SchedulePlanOperations {
 		return true;
 	}
 		
-	public static boolean deleteSchedulePlan(Context context, SchedulePlan schedulePlan){
-		
-		try{
-			RailsRestClient.Delete(SCHEDULE_PLAN_CONTROLLER, Integer.toString(schedulePlan.getId()));
-		}catch(Exception e){
-			e.printStackTrace();
-			Log.w("NO Internet", "You don't have a internet connection");
+	public static boolean deleteSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){
+		if (isRemote) {
+			try{
+				RailsRestClient.Delete(SCHEDULE_PLAN_CONTROLLER, Integer.toString(schedulePlan.getId()));
+			}catch(Exception e){
+				e.printStackTrace();
+				Log.w("NO Internet", "You don't have a internet connection");
+			}
 		}
 		
 		Uri deleteSchedulePlanUri = ContentUris.withAppendedId(SchedulePlan.CONTENT_URI, schedulePlan.getId()); 
@@ -133,7 +137,13 @@ public class SchedulePlanOperations {
 		return schedules;
 	}
 	
-	public static boolean createOrUpdateSchedulePlan(Context context, int schedulePlanId) {
-		return false;
+	public static boolean createOrUpdateSchedulePlan(Context context, SchedulePlan plan) {
+		if (getSchedulePlan(context, plan.getId()) == null) {
+			createSchedulePlan(context, plan, false);
+		}
+		else {
+			updateSchedulePlan(context, plan, false);
+		}
+		return true;
 	}
 }
