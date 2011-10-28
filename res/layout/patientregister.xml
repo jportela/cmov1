@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:orientation="vertical">
+    <LinearLayout android:background="@android:color/white" android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_width="282dp" android:layout_height="89dp">
+    	<ImageView
+    		android:layout_gravity="left"
+    		android:src="@drawable/cmovmedical"
+    		android:layout_height="match_parent" android:layout_width="322dp"/>
+    </LinearLayout>
+    <TableLayout android:id="@+id/tableLayout" android:layout_width="fill_parent" android:layout_height="wrap_content"
+    			 android:stretchColumns = "1">
+        <TableRow android:id="@+id/tableRow1" android:layout_height="fill_parent" android:layout_width="fill_parent">
+            <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Name" android:id="@+id/name" android:layout_width="fill_parent"></TextView>
+            <EditText android:layout_height="wrap_content" android:id="@+id/patientName" android:layout_width="fill_parent"></EditText>
+        </TableRow>
+        <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Address" android:id="@+id/address" android:layout_width="wrap_content"></TextView>
+            <EditText android:layout_height="wrap_content" android:inputType="textPostalAddress" android:layout_width="wrap_content" android:id="@+id/patientRegisterAddress">
+                <requestFocus></requestFocus>
+            </EditText>
+        </TableRow>
+        <TableRow android:id="@+id/tableRow3" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Type" android:id="@+id/type" android:layout_width="wrap_content"></TextView>
+            <RadioGroup android:id="@+id/radioGroup1" android:layout_width="wrap_content" android:layout_height="wrap_content">
+                <RadioButton android:id="@+id/male" android:text="Male" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"></RadioButton>
+                <RadioButton android:id="@+id/female" android:text="Female" android:layout_width="wrap_content" android:layout_height="wrap_content"></RadioButton>
+            </RadioGroup>
+        </TableRow>
+        <TableRow android:id="@+id/tableRow4" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <TextView android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Username"></TextView>
+            <EditText android:id="@+id/patientRegisterUsername" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+        </TableRow>
+	    <TableRow android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/tableRow5">
+	        <TextView android:id="@+id/textView2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Password"></TextView>
+	        <EditText android:id="@+id/patientRegisterPassword" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+	    </TableRow>
+	    <TableRow android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/tableRow6">
+	    	<TextView android:id="@+id/patientBirthday" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Birthday"/>
+    		<EditText android:id="@+id/pickDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""/>
+	    </TableRow>
+	    
+    </TableLayout>
+    <TableRow android:layout_height="wrap_content" android:gravity="right" android:layout_width="match_parent" android:id="@+id/tableRow7">
+        <Button android:text="Register" android:id="@+id/patientRegisterDB" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+    </TableRow>
+</LinearLayout>

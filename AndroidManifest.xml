@@ -8,7 +8,7 @@
     
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".PlannerActivity"
+        <activity android:name=".LoginActivity"
                   android:label="@string/app_name" android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,6 +18,9 @@
 
         <activity android:name=".Cmov1_doctorActivity"> </activity>
         <activity android:name=".DoctorActivity" android:theme="@android:style/Theme.Light"> </activity>
+        <activity android:name=".ListAppointmentActivity" android:theme="@android:style/Theme.Light"> </activity>
+        <activity android:name=".PatientViewActivity" android:theme="@android:style/Theme.Light"> </activity>
+        <activity android:name=".PatientRegisterActivity" android:theme="@android:style/Theme.Light"> </activity>
         
         <provider android:name=".providers.DoctorContentProvider"
          android:authorities="pt.up.fe.cmov.common.providers.doctorcontentprovider" />   

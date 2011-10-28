@@ -1,8 +1,10 @@
 package pt.up.fe.cmov.operations;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,6 +40,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 
 		values.put(Appointment.APPOINTMENT_PATIENT_ID, appointment.getPatientId());
 		values.put(Appointment.APPOINTMENT_SCHEDULE_ID, appointment.getScheduleId());
+		values.put(Appointment.APPOINTMENT_DOCTOR_ID, appointment.getDoctorId());
 		values.put(Appointment.APPOINTMENT_DATE,JSONOperations.dbDateFormater.format(appointment.getDate()));
 		Uri uri = context.getContentResolver().insert(Appointment.CONTENT_URI, values);		
 		
@@ -59,6 +62,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		values.put(Appointment.APPOINTMENT_ID,appointment.getId());
 		values.put(Appointment.APPOINTMENT_PATIENT_ID, appointment.getPatientId());
 		values.put(Appointment.APPOINTMENT_SCHEDULE_ID, appointment.getScheduleId());
+		values.put(Appointment.APPOINTMENT_DOCTOR_ID, appointment.getDoctorId());
 		values.put(Appointment.APPOINTMENT_DATE,JSONOperations.dbDateFormater.format(appointment.getDate()));
 		Uri updateAppointmentPlanUri = ContentUris.withAppendedId(Appointment.CONTENT_URI, appointment.getId());
 		context.getContentResolver().update(updateAppointmentPlanUri, values, null, null);
@@ -97,6 +101,16 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return null;
 	}
 	
+	public static ArrayList<Appointment> getRemoteServerAllAppointment(int doctor_id) throws JSONException, ParseException{
+		ArrayList<Appointment> queryAppointments = new ArrayList<Appointment>();
+        JSONArray jsonArrays = RailsRestClient.GetArray(DoctorOperations.DOCTOR_CONTROLER + "/" 
+        					   + Integer.toString(doctor_id) + "/" + APPOINTMENT_CONTROLER);
+        for(int i = 0; i < jsonArrays.length();i++){
+        	queryAppointments.add(JSONOperations.JSONToAppointment(jsonArrays.getJSONObject(i)));
+        }
+        return queryAppointments;
+	}
+	
 	public static Appointment getAppointment(Context context, int id) {
 				
 		Uri querySchedulePlanUri = ContentUris.withAppendedId(Appointment.CONTENT_URI, id); 
@@ -106,7 +120,8 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 			   Date dateTime = new Date(cAppointment.getString(cAppointment.getColumnIndex(Appointment.APPOINTMENT_DATE)));
 			   String patient_id = cAppointment.getString(cAppointment.getColumnIndex(Appointment.APPOINTMENT_PATIENT_ID)); 
 			   String schedule_id = cAppointment.getString(cAppointment.getColumnIndex(Appointment.APPOINTMENT_SCHEDULE_ID)); 
-			   app = new Appointment(id,Integer.parseInt(patient_id),Integer.parseInt(schedule_id),dateTime);
+			   String doctor_id = cAppointment.getString(cAppointment.getColumnIndex(Appointment.APPOINTMENT_DOCTOR_ID)); 
+			   app = new Appointment(id,Integer.parseInt(patient_id),Integer.parseInt(schedule_id),Integer.parseInt(doctor_id),dateTime);
 			} 
 		cAppointment.close();
 		return app;

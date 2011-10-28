@@ -7,8 +7,8 @@ import android.net.Uri;
 
 public class Patient extends Person {
 
-	private String address;
-	private String sex;
+	private String address,sex;
+	private String password = "";
 		
 	public static final String PATIENT_ADDRESS = "address";
 	public static final String PATIENT_SEX = "sex";
@@ -21,6 +21,15 @@ public class Patient extends Person {
 		this.address = address;
 		this.sex = sex;
 	}
+	
+	public Patient(int id, String name, Date birthDate, String username,String address,String sex,String password) {
+		super(id, name, birthDate, username);
+		this.address = address;
+		this.sex = sex;
+		this.setPassword(password);
+	}
+	
+	public Patient(){}
 	
 	public void setAddress(String address){
 		this.address = address;
@@ -36,6 +45,14 @@ public class Patient extends Person {
 	
 	public String getSex(){
 		return this.sex;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 	

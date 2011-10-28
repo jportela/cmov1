@@ -20,8 +20,11 @@ import android.content.Context;
 public class JSONOperations {
 	
 	public static final DateFormat dbDateFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss");
-	public static final SimpleDateFormat formatter = new SimpleDateFormat("EEEE, dd MMM kk:mm");  
+	public static final DateFormat dbDateFormaterP = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat formatter = new SimpleDateFormat("kk:mm");  
 	public static final DateFormat dbDateTimeZoneFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
+	public static final SimpleDateFormat weekDay = new SimpleDateFormat("EEEE, dd MMM");
+	public static final SimpleDateFormat completeDate = new SimpleDateFormat("EEEE, dd MMM yyyy kk:mm");
 
 	public static JSONObject doctorToJSON(Doctor doctor) throws JSONException{
 		
@@ -56,7 +59,7 @@ public class JSONOperations {
 		JSONObject json = new JSONObject();
 		json.put("birthdate", birthday);
 		json.put("name", patient.getName());
-		json.put("password_md5", "LOL");
+		json.put("password_md5", patient.getPassword());
 		json.put("username", patient.getUsername());
 		json.put("address", patient.getAddress());
 		json.put("sex", patient.getSex());
@@ -69,9 +72,10 @@ public class JSONOperations {
 		Date birthday =	dbDateFormater.parse(json.getString("birthdate"));
 		String name = json.getString("name");
 		String username = json.getString("username");
+		String password = json.getString("password_md5");
 		String photo = json.getString("address");
 		String sex = json.getString("sex");
-		return new Patient(id,name,birthday,username,photo,sex);
+		return new Patient(id,name,birthday,username,photo,sex,password);
 	}
 	
 	public static Date JSONToDate(JSONObject json) throws JSONException, ParseException {
@@ -101,6 +105,7 @@ public class JSONOperations {
 		JSONObject json = new JSONObject();
 		json.put(Appointment.APPOINTMENT_PATIENT_ID,app.getPatientId());
 		json.put(Appointment.APPOINTMENT_SCHEDULE_ID,app.getScheduleId());
+		json.put(Appointment.APPOINTMENT_DOCTOR_ID,app.getDoctorId());
 		json.put(Appointment.APPOINTMENT_DATE, startDate);
 		return json;
 	}
@@ -110,7 +115,8 @@ public class JSONOperations {
 		Date startime =	dbDateFormater.parse(json.getString(Appointment.APPOINTMENT_DATE));
 		int patient_id = json.getInt(Appointment.APPOINTMENT_PATIENT_ID);
 		int schedule_id = json.getInt(Appointment.APPOINTMENT_SCHEDULE_ID);
-		return new Appointment(id,patient_id,schedule_id,startime);
+		int doctor_id = json.getInt(Appointment.APPOINTMENT_DOCTOR_ID);
+		return new Appointment(id,patient_id,schedule_id,doctor_id,startime);
 	}
 
 	public static JSONObject DateToJSON(Date date) throws JSONException, ParseException {
