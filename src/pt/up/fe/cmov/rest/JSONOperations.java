@@ -20,6 +20,7 @@ import android.content.Context;
 public class JSONOperations {
 	
 	public static final DateFormat dbDateFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss");
+	public static final DateFormat dbDateFormaterP = new SimpleDateFormat("yyyy-MM-dd");
 	public static final SimpleDateFormat formatter = new SimpleDateFormat("kk:mm");  
 	public static final DateFormat dbDateTimeZoneFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
 	public static final SimpleDateFormat weekDay = new SimpleDateFormat("EEEE, dd MMM");
@@ -58,7 +59,7 @@ public class JSONOperations {
 		JSONObject json = new JSONObject();
 		json.put("birthdate", birthday);
 		json.put("name", patient.getName());
-		json.put("password_md5", "LOL");
+		json.put("password_md5", patient.getPassword());
 		json.put("username", patient.getUsername());
 		json.put("address", patient.getAddress());
 		json.put("sex", patient.getSex());
@@ -71,9 +72,10 @@ public class JSONOperations {
 		Date birthday =	dbDateFormater.parse(json.getString("birthdate"));
 		String name = json.getString("name");
 		String username = json.getString("username");
+		String password = json.getString("password_md5");
 		String photo = json.getString("address");
 		String sex = json.getString("sex");
-		return new Patient(id,name,birthday,username,photo,sex);
+		return new Patient(id,name,birthday,username,photo,sex,password);
 	}
 	
 	public static Date JSONToDate(JSONObject json) throws JSONException, ParseException {

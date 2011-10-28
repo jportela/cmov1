@@ -13,7 +13,7 @@
     <LinearLayout android:id="@+id/linearLayout2" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="1">
         <TextView android:id="@+id/username" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Username" 
         android:textAppearance="?android:attr/textAppearanceLarge" android:paddingTop="2dip"></TextView>
-        <AutoCompleteTextView android:layout_height="wrap_content" android:layout_width="match_parent" android:text="" android:id="@+id/usernameField" android:paddingTop="2dip">
+        <AutoCompleteTextView android:layout_height="wrap_content" android:inputType="textPersonName" android:layout_width="match_parent" android:text="" android:id="@+id/usernameField" android:paddingTop="2dip">
             <requestFocus></requestFocus>
         </AutoCompleteTextView>
         <TextView android:id="@+id/password" android:paddingTop="2dip" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="Password" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>

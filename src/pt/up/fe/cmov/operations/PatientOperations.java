@@ -1,12 +1,17 @@
 package pt.up.fe.cmov.operations;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Person;
+import pt.up.fe.cmov.entities.Speciality;
 import pt.up.fe.cmov.rest.JSONOperations;
 import pt.up.fe.cmov.rest.RailsRestClient;
 import android.content.ContentUris;
@@ -117,5 +122,13 @@ public class PatientOperations {
 		cPatient.close();
 		return d;
 	}
-
+	
+	public static ArrayList<Patient> queryPatientsRemoteServer() throws JSONException, ParseException{
+		ArrayList<Patient> queryPatients = new ArrayList<Patient>();
+        JSONArray jsonArrays = RailsRestClient.GetArray("patients");
+        for(int i = 0; i < jsonArrays.length();i++){
+        	queryPatients.add(JSONOperations.JSONToPatient(jsonArrays.getJSONObject(i)));
+        }
+        return queryPatients;
+	}
 }

@@ -1,10 +1,6 @@
 package pt.up.fe.cmov;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,11 +10,11 @@ import android.widget.Toast;
 
 public class PatientViewActivity extends ListActivity {
 
+	long millis = Calendar.getInstance().getTime().getTime() - ListAppointmentActivity.p.getBirthDate().getTime();
+	int year   = (int) ((millis / (1000*60*60*24*30)) % 12) * -1;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		long millis = Calendar.getInstance().getTime().getTime() - ListAppointmentActivity.p.getBirthDate().getTime();
-		int year   = (int) ((millis / (1000*60*60*24*30)) % 12) * -1;
 		
 		String[] names = new String[] { "Name\n" + ListAppointmentActivity.p.getName(),
 		"Address\n" + ListAppointmentActivity.p.getAddress(),"Age\n" + 
@@ -30,7 +26,6 @@ public class PatientViewActivity extends ListActivity {
 		listView.addHeaderView(header);
 		this.setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, names));
-		ListAppointmentActivity.p = null;
 	}
 
 	@Override
