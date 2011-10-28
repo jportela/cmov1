@@ -8,7 +8,7 @@
     
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".ScheduleActivity"
+        <activity android:name=".PlannerActivity"
                   android:label="@string/app_name" android:theme="@android:style/Theme.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

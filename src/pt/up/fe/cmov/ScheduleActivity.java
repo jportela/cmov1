@@ -57,7 +57,6 @@ public class ScheduleActivity extends Activity {
 	}
 	
 	private void buildPlanner() {
-		
 		final Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
         mMonth = c.get(Calendar.MONTH);
@@ -112,8 +111,6 @@ public class ScheduleActivity extends Activity {
         	if (i % 2 == 1)
         		scheduleTable.addView(row);
         }
-        
-        
 	}
 	
 	@Override
