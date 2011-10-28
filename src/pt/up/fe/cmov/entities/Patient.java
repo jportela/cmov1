@@ -22,6 +22,8 @@ public class Patient extends Person {
 		this.sex = sex;
 	}
 	
+	public Patient(){}
+	
 	public void setAddress(String address){
 		this.address = address;
 	}

@@ -6,10 +6,10 @@
   <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" 
   				android:id="@+id/linearLayout2" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
       <LinearLayout android:layout_weight="1" android:layout_height="match_parent" android:id="@+id/linearLayout3" android:layout_width="match_parent">
-          <Button android:text="Appointments" android:id="@+id/button2" android:layout_width="match_parent" android:layout_height="wrap_content"></Button>
+          <Button android:text="Appointments" android:id="@+id/appointmentsButton" android:layout_width="match_parent" android:layout_height="wrap_content"></Button>
       </LinearLayout>
       <LinearLayout android:layout_weight="1" android:layout_height="match_parent" android:id="@+id/linearLayout4" android:layout_width="match_parent">
-          <Button android:text="Schedule" android:id="@+id/button1" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
+          <Button android:text="Schedule" android:id="@+id/scheduleButton" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>
       </LinearLayout>
   </LinearLayout>
   	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,8 @@
 	    android:layout_height="fill_parent" android:layout_above="@+id/linearLayout2">
   		<LinearLayout android:id="@+id/linearLayout1" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
   			<TextView android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:gravity="center_horizontal"
-  			 android:text="@string/next_appointment" android:textColor="#0000ff" android:layout_width="match_parent" android:layout_height="43dp"></TextView>
+  			 android:text="@string/next_appointment" android:textColor="#0000ff" android:layout_width="match_parent" android:layout_height="43dp" 
+  			 android:textStyle="bold"></TextView>
   		</LinearLayout>
     </ScrollView>
 </RelativeLayout>

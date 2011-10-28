@@ -1,6 +1,7 @@
 package pt.up.fe.cmov;
 
 
+import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.Activity;
 import android.os.Bundle;
 
