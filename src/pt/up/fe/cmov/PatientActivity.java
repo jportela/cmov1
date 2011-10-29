@@ -7,20 +7,26 @@ import org.json.JSONException;
 
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
-import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.listadapter.EntryAdapter;
+import pt.up.fe.cmov.listadapter.EntryItem;
+import pt.up.fe.cmov.listadapter.Item;
+import pt.up.fe.cmov.listadapter.SectionItem;
 import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
+import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class PatientActivity extends ListActivity {
 	
-	ArrayList<Appointment> appointmentsPatients  = new ArrayList<Appointment>();
+	public static ArrayList<Appointment> appointmentsPatients  = new ArrayList<Appointment>();
+	private ArrayList<Item> items = new ArrayList<Item>();
+	static public Doctor doc;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -37,25 +43,36 @@ public class PatientActivity extends ListActivity {
 			e.printStackTrace();
 		}
 		
-		ArrayList<String> nameApp = new ArrayList<String>();
-		
-		for(int i = 0; i < appointmentsPatients.size();i++){
-	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
-			nameApp.add(JSONOperations.completeDate.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
-						+ doc.getName() + "\n" + Speciality.Records.get(doc.getSpeciality().getId()));	 
-		}
-
 		View header = getLayoutInflater().inflate(R.layout.header, null);
 		ListView listView = getListView();
 		listView.addHeaderView(header);
-		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, nameApp));
+		
+		String weekDay = new String();
+		for(int i = 0; i < appointmentsPatients.size();i++){
+			if(!weekDay.equals(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime()))){
+				weekDay = JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime());
+				items.add(new SectionItem(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime())));
+			}
+
+	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
+
+			
+			items.add(new EntryItem(doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
+					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
+		}
+
+	
+		EntryAdapter adapter = new EntryAdapter(this, items);
+		setListAdapter(adapter);
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		/*Intent k = new Intent(PatientActivity.this, PatientViewActivity.class);
-		startActivity(k);*/
+		if(!items.get(position - 1).isSection()){
+			PatientActivity.doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(position - 1).getDoctorId());
+			Intent k = new Intent(PatientActivity.this, DoctorViewActivity.class);
+			startActivity(k);
+		}
 	}
 
 }
