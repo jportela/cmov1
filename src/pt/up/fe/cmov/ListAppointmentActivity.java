@@ -3,6 +3,10 @@ package pt.up.fe.cmov;
 import java.util.ArrayList;
 
 import pt.up.fe.cmov.entities.Patient;
+import pt.up.fe.cmov.listadapter.EntryAdapter;
+import pt.up.fe.cmov.listadapter.EntryItem;
+import pt.up.fe.cmov.listadapter.Item;
+import pt.up.fe.cmov.listadapter.SectionItem;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
 
@@ -10,31 +14,40 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class ListAppointmentActivity extends ListActivity {
 
 	static public Patient p = new Patient();
+	ArrayList<Item> items = new ArrayList<Item>();
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		ArrayList<String> nameApp = new ArrayList<String>();
+		
+		String weekDay = new String();
 		for(int i = 0; i < DoctorActivity.appointments.size();i++){
+			if(!weekDay.equals(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime()))){
+				weekDay = JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime());
+				items.add(new SectionItem(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime())));
+			}
+
 	        Patient pat = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(i).getPatientId());
-			nameApp.add(JSONOperations.completeDate.format(DoctorActivity.appointments.get(i).getDate().getTime()) + "  " + pat.getName());	 
+
+			
+			items.add(new EntryItem(i,pat.getName(), JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime())));			
 		}
-		View header = getLayoutInflater().inflate(R.layout.header, null);
-		ListView listView = getListView();
-		listView.addHeaderView(header);
-		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, nameApp));
+		
+		EntryAdapter adapter = new EntryAdapter(this, items);
+		setListAdapter(adapter);
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-        p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(position).getPatientId());
-		Intent k = new Intent(ListAppointmentActivity.this, PatientViewActivity.class);
-		startActivity(k);
+		if(!items.get(position).isSection()){
+			int pos = ((EntryItem)items.get(position)).getPos();
+			p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(pos).getPatientId());
+			Intent k = new Intent(ListAppointmentActivity.this, PatientViewActivity.class);
+			startActivity(k);
+		}
 	}
 }

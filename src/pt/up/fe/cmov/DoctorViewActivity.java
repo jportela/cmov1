@@ -25,8 +25,8 @@ public class DoctorViewActivity extends ListActivity {
 		
 		items.add(new SectionItem(PatientActivity.doc.getName()));
 			
-		items.add(new EntryItem("Speciality",SpecialityOperations.getSpeciality(this,PatientActivity.doc.getSpeciality().getId()).getName()));
-		items.add(new EntryItem("Age",Integer.toString(year) + " years old"));
+		items.add(new EntryItem(0,"Speciality",SpecialityOperations.getSpeciality(this,PatientActivity.doc.getSpeciality().getId()).getName()));
+		items.add(new EntryItem(0,"Age",Integer.toString(year) + " years old"));
 		 
 		EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);

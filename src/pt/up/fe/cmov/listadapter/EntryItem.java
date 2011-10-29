@@ -5,8 +5,10 @@ public class EntryItem implements Item{
 
 	public final String title;
 	public final String subtitle;
+	public int pos;
 
-	public EntryItem(String title, String subtitle) {
+	public EntryItem(int pos,String title, String subtitle) {
+		this.pos = pos;
 		this.title = title;
 		this.subtitle = subtitle;
 	}
@@ -14,6 +16,10 @@ public class EntryItem implements Item{
 	@Override
 	public boolean isSection() {
 		return false;
+	}
+	
+	public int getPos(){
+		return pos;
 	}
 
 }
