@@ -10,6 +10,7 @@ import pt.up.fe.cmov.display.Display;
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.operations.AppointmentOperations;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
 import android.app.Activity;
@@ -35,7 +36,7 @@ public class DoctorActivity extends Activity implements OnClickListener{
         boolean setPad = false;
         
         try {
-			appointments = AppointmentOperations.getRemoteServerAllAppointment(LoginActivity.loginDoctor.getId());
+			appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER,LoginActivity.loginDoctor.getId());
 			int size = 0;
 			if(appointments.size() < 6) size = appointments.size(); else size = 5;
 			for(int i = 0; i < size;i++){

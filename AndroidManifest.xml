@@ -9,7 +9,7 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".LoginActivity"
-                  android:label="@string/app_name" android:theme="@android:style/Theme.Light">
+                  android:label="@string/app_name" android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -17,10 +17,11 @@
         </activity>
 
         <activity android:name=".Cmov1_doctorActivity"> </activity>
-        <activity android:name=".DoctorActivity" android:theme="@android:style/Theme.Light"> </activity>
-        <activity android:name=".ListAppointmentActivity" android:theme="@android:style/Theme.Light"> </activity>
-        <activity android:name=".PatientViewActivity" android:theme="@android:style/Theme.Light"> </activity>
-        <activity android:name=".PatientRegisterActivity" android:theme="@android:style/Theme.Light"> </activity>
+        <activity android:name=".DoctorActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".ListAppointmentActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".PatientViewActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".PatientRegisterActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".PatientActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         
         <provider android:name=".providers.DoctorContentProvider"
          android:authorities="pt.up.fe.cmov.common.providers.doctorcontentprovider" />   
