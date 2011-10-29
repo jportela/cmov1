@@ -23,13 +23,14 @@ public class ScheduleOperations {
 	public static final String SCHEDULE_CONTROLLER = "schedules";
 	
 	
-	public static boolean createSchedule(Context context, Schedule schedule, boolean isRemote){
+	public static int createSchedule(Context context, Schedule schedule, boolean isRemote){
 		
 		if (isRemote) {
 			try{	
 				String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
-					schedule.getSchedulePlanId() + SCHEDULE_CONTROLLER;
-				RailsRestClient.Post(controller, JSONOperations.scheduleToJSON(schedule));
+					schedule.getSchedulePlanId() + "/" + SCHEDULE_CONTROLLER;
+				JSONObject obj = RailsRestClient.Post(controller, JSONOperations.scheduleToJSON(schedule));
+				schedule.setId(obj.getInt("id"));
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
@@ -45,16 +46,16 @@ public class ScheduleOperations {
 		values.put(Schedule.SCHEDULE_START_DATE, JSONOperations.dbDateFormater.format(schedule.getStartDate()));
 		values.put(Schedule.SCHEDULE_END_DATE, JSONOperations.dbDateFormater.format(schedule.getEndDate()));
 		values.put(Schedule.SCHEDULE_PLAN_ID, schedule.getSchedulePlanId());
-		Uri uri = context.getContentResolver().insert(Schedule.CONTENT_URI, values);		
+		context.getContentResolver().insert(Schedule.CONTENT_URI, values);		
 		
-		return (uri != null);
+		return schedule.getId();
 	}
 	
 	public static boolean updateSchedule(Context context, Schedule schedule, boolean isRemote){
 		if (isRemote) {
 			try{			
 				String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
-					schedule.getSchedulePlanId() + SCHEDULE_CONTROLLER;
+					schedule.getSchedulePlanId() + "/" + SCHEDULE_CONTROLLER;
 				RailsRestClient.Put(controller,Integer.toString(schedule.getId()), JSONOperations.scheduleToJSON(schedule));
 				
 			}catch(Exception e){
@@ -80,7 +81,7 @@ public class ScheduleOperations {
 		if (isRemote) {
 			try{
 				String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
-					schedule.getSchedulePlanId() + SCHEDULE_CONTROLLER;
+					schedule.getSchedulePlanId() + "/" + SCHEDULE_CONTROLLER;
 				RailsRestClient.Delete(controller, Integer.toString(schedule.getId()));
 			}catch(Exception e){
 				e.printStackTrace();
@@ -100,7 +101,7 @@ public class ScheduleOperations {
 	
 	public static Schedule getRemoteServerSchedule(Context context, int schedulePlanId, int id){
 		String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
-			Integer.toString(schedulePlanId) + SCHEDULE_CONTROLLER;
+			Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER;
 		JSONObject json = RailsRestClient.Get(controller + "/" + Integer.toString(id));
 		try {
 			 return JSONOperations.JSONToSchedule(json);
@@ -130,7 +131,7 @@ public class ScheduleOperations {
 	
 	public static ArrayList<Schedule> getRemoteSchedules(Context context, int schedulePlanId) {
 		String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
-			Integer.toString(schedulePlanId) + SCHEDULE_CONTROLLER;
+			Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER;
 		JSONArray jsonArray = RailsRestClient.GetArray(controller);
 		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 		

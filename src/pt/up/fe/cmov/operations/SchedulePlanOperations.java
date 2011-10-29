@@ -25,11 +25,12 @@ public class SchedulePlanOperations {
 	public static final String SCHEDULE_CONTROLLER = "schedules";
 	
 	
-	public static boolean createSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){
+	public static int createSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){
 		
 		if (isRemote) {
 			try{	
-				RailsRestClient.Post(SCHEDULE_PLAN_CONTROLLER, JSONOperations.schedulePlanToJSON(schedulePlan));
+				JSONObject obj = RailsRestClient.Post(SCHEDULE_PLAN_CONTROLLER, JSONOperations.schedulePlanToJSON(schedulePlan));
+				schedulePlan.setId(obj.getInt("id"));
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
@@ -44,9 +45,9 @@ public class SchedulePlanOperations {
 		
 		values.put(SchedulePlan.SCHEDULE_STARTDATE,JSONOperations.dbDateFormater.format(schedulePlan.getStartDate()));
 		values.put(SchedulePlan.SCHEDULE_DOCTOR_ID, schedulePlan.getId());
-		Uri uri = context.getContentResolver().insert(SchedulePlan.CONTENT_URI, values);		
+		context.getContentResolver().insert(SchedulePlan.CONTENT_URI, values);		
 		
-		return (uri != null);
+		return schedulePlan.getId();
 	}
 	
 	public static boolean updateSchedulePlan(Context context, SchedulePlan schedulePlan, boolean isRemote){

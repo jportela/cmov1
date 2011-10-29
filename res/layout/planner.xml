@@ -40,7 +40,7 @@
 	       	android:text="@string/plannerStartDateLabel"
 	       	android:textSize="16dp"
 	       	android:gravity="center_vertical"
-	       	android:paddingRight="10dp"/>
+	       	android:paddingRight="10dp"/> 
 	    <Button android:id="@+id/datePickerButton" 
 	    	android:layout_width="fill_parent"
 	       	android:layout_height="wrap_content"
@@ -62,14 +62,12 @@
 	       	/>
   	</LinearLayout>
   	<ScrollView 
-  		android:orientation="vertical"
 	  	android:layout_width="fill_parent"
 	  	android:layout_height="wrap_content">
-	  	<LinearLayout android:id="@+id/plannerRows" 
-	  		android:orientation="vertical"
+	  	<TableLayout android:id="@+id/plannerRows" 
 		  	android:layout_width="fill_parent"
 		  	android:layout_height="wrap_content">
-		 </LinearLayout>
+		 </TableLayout>
 	  
   	</ScrollView>
 </LinearLayout>

@@ -12,13 +12,13 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string-array name="weekdays_array">
-        <item>Mon</item>
-        <item>Tue</item>
-        <item>Wed</item>
-        <item>Thu</item>
-        <item>Sex</item>
-        <item>Sat</item>
-        <item>Sun</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
     </string-array>
     <string-array name="hours_array">
         <item>00:00</item>
