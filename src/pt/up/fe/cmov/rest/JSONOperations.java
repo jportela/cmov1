@@ -127,7 +127,7 @@ public class JSONOperations {
 	
 	public static Speciality JSONToSpeciality(JSONObject json) throws JSONException, ParseException{
 		int id = json.getInt("id");
-		String name = json.getString("name");
+		String name = json.getString("sname");
 		return new Speciality(id,name);
 	}
 
