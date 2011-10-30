@@ -24,6 +24,8 @@
         <activity android:name=".PatientActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         <activity android:name=".DoctorViewActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         <activity android:name=".MakeNewAppointmentActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".ScheduleActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".PlannerActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         
         
         <provider android:name=".providers.DoctorContentProvider"

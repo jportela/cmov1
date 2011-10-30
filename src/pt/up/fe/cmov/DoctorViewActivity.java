@@ -8,7 +8,6 @@ import pt.up.fe.cmov.listadapter.EntryItem;
 import pt.up.fe.cmov.listadapter.Item;
 import pt.up.fe.cmov.listadapter.SectionItem;
 import pt.up.fe.cmov.operations.SpecialityOperations;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 
@@ -30,5 +29,6 @@ public class DoctorViewActivity extends ListActivity {
 		 
 		EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);
+		
 	}
 }
