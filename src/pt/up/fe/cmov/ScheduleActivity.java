@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ScheduleActivity extends Activity {
 
@@ -34,7 +35,7 @@ public class ScheduleActivity extends Activity {
     
     public static final String EXTRA_SCHEDULE_TYPE = "scheduleType";
     public static final String EXTRA_SCHEDULE_DOCTOR = "scheduleDoctor";
-	private static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
+	public static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
     
     private int doctorId = -1;
     private int patientId = -1;
@@ -144,10 +145,13 @@ public class ScheduleActivity extends Activity {
 		doctorId = getIntent().getIntExtra(EXTRA_SCHEDULE_DOCTOR, 0);
 		patientId = getIntent().getIntExtra(EXTRA_SCHEDULE_PATIENT, 0);
 		
-		patientId = 2;
-		doctorId = 4; //TODO: Dummy
-		
 		SchedulePlan plan = DoctorOperations.getRemoteCurrentPlan(this, doctorId);
+		
+		if (plan == null) {
+			Toast.makeText(this, "This doctor has no Schedule Plan", Toast.LENGTH_LONG).show();
+			this.finish();
+			return;
+		}
 		
 		ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
 		
@@ -237,6 +241,8 @@ public class ScheduleActivity extends Activity {
 	}
 	
 	private void buildGrid() {
+		if (panelOrder.isEmpty())
+			return;
 		String label = panelOrder.get(selectedPanel);
 		ScheduleAdapter adapter = days.get(label);
 		GridView scheduleTable = (GridView)findViewById(R.id.scheduleTable);
