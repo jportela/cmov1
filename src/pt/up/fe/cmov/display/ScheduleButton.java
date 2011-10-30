@@ -1,5 +1,7 @@
 package pt.up.fe.cmov.display;
 
+import java.util.Date;
+
 import pt.up.fe.cmov.entities.Appointment;
 import android.content.Context;
 import android.graphics.ColorFilter;
@@ -20,6 +22,8 @@ public class ScheduleButton extends Button {
     private int id;
     private int state;
     private Appointment appointment;
+    private int scheduleId;
+    private Date date;
     
 	private OnClickListener scheduleButtonListener =    
 		new OnClickListener() {
@@ -31,24 +35,28 @@ public class ScheduleButton extends Button {
 
     };
 
-	public ScheduleButton(Context context, int id) {
+	public ScheduleButton(Context context, int id, int scheduleId, Date date) {
 		super(context);
 		this.id = id;
 		this.state = STATE_AVAILABLE;
+		this.scheduleId = scheduleId;
+		this.date = date;
 		this.appointment = null;
 		this.setText(calculateTimeString());
 		this.getBackground().setColorFilter(GREEN_COLOR_FILTER);
-		this.setOnClickListener(scheduleButtonListener);
+		//this.setOnClickListener(scheduleButtonListener);
 	}
 	
-	public ScheduleButton(Context context, int id, Appointment appointment) {
+	public ScheduleButton(Context context, int id, int scheduleId, Date date, Appointment appointment) {
 		super(context);
 		this.id = id;
 		this.state = STATE_BUSY;
 		this.appointment = appointment;
+		this.scheduleId = scheduleId;
+		this.date = date;
 		this.setText(calculateTimeString());
 		this.getBackground().setColorFilter(RED_COLOR_FILTER);
-		this.setOnClickListener(scheduleButtonListener);
+		//this.setOnClickListener(scheduleButtonListener);
 	}
 	
 	public void toggleState() {
@@ -85,6 +93,23 @@ public class ScheduleButton extends Button {
 	public void setAppointment(Appointment appointment) {
 		this.appointment = appointment;
 	}
+	
+	public int getScheduleId() {
+		return scheduleId;
+	}
+
+	public void setScheduleId(int scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
 	
 	public String calculateTimeString() {
 		int digit = id/2;

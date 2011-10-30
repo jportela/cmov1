@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Person;
+import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
 import pt.up.fe.cmov.providers.DoctorContentProvider;
 import pt.up.fe.cmov.rest.JSONOperations;
@@ -178,5 +179,17 @@ public class DoctorOperations {
 		else {
 			updateDoctor(context, doctor, false);
 		}		
+	}
+	
+	public static SchedulePlan getRemoteCurrentPlan(Context context, int doctorId){
+		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plan");
+		try {
+			 return JSONOperations.JSONToSchedulePlan(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

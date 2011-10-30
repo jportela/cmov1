@@ -101,12 +101,18 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return null;
 	}
 	
-	public static ArrayList<Appointment> getRemoteServerAllAppointment(String controller,int person_id) throws JSONException, ParseException{
+	public static ArrayList<Appointment> getRemoteServerAllAppointment(String controller,int person_id) {
 		ArrayList<Appointment> queryAppointments = new ArrayList<Appointment>();
         JSONArray jsonArrays = RailsRestClient.GetArray(controller + "/" 
         					   + Integer.toString(person_id) + "/" + APPOINTMENT_CONTROLER);
         for(int i = 0; i < jsonArrays.length();i++){
-        	queryAppointments.add(JSONOperations.JSONToAppointment(jsonArrays.getJSONObject(i)));
+        	try {
+        		queryAppointments.add(JSONOperations.JSONToAppointment(jsonArrays.getJSONObject(i)));
+        	} catch (JSONException e) {
+				Log.e("SCHEDULE", "Couldn't decode JSON object");
+			} catch (ParseException e) {
+				Log.e("SCHEDULE", "Couldn't decode JSON object");
+			}
         }
         return queryAppointments;
 	}

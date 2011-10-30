@@ -1,9 +1,6 @@
 package pt.up.fe.cmov;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-
-import org.json.JSONException;
 
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
@@ -34,15 +31,9 @@ public class PatientActivity extends ListActivity {
 		
 		setContentView(R.layout.patientview);
 		
-		try {
-			appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
+		
 		
 		View header = getLayoutInflater().inflate(R.layout.header, null);
 		ListView listView = getListView();
