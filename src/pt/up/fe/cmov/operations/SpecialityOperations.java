@@ -17,7 +17,7 @@ public class SpecialityOperations {
 			values.put(Speciality.SPECIALITY_ID, speciality.getId());
 		}
 		
-		values.put(Speciality.SPECIALITY_NAME, speciality.getName());
+		values.put(Speciality.SPECIALITY_SNAME, speciality.getName());
 	
 		Uri uri = context.getContentResolver().insert(Speciality.CONTENT_URI, values);		
 		
@@ -29,7 +29,7 @@ public class SpecialityOperations {
 		ContentValues values = new ContentValues();
 		
 		values.put(Speciality.SPECIALITY_ID, speciality.getId());
-		values.put(Speciality.SPECIALITY_NAME, speciality.getName());
+		values.put(Speciality.SPECIALITY_SNAME, speciality.getName());
 
 		Uri updateUri = ContentUris.withAppendedId(Speciality.CONTENT_URI, speciality.getId());
 		context.getContentResolver().update(updateUri, values, null, null);
@@ -57,7 +57,7 @@ public class SpecialityOperations {
 			return null;
 		Speciality s = null;
 		if (c.moveToNext()) { 
-			   String name = c.getString(c.getColumnIndex(Speciality.SPECIALITY_NAME));
+			   String name = c.getString(c.getColumnIndex(Speciality.SPECIALITY_SNAME));
 			   s = new Speciality(id,name);
 			} 
 		c.close();

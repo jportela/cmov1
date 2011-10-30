@@ -8,7 +8,7 @@
     
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".ScheduleActivity"
+        <activity android:name=".LoginActivity"
                   android:label="@string/app_name" android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +23,7 @@
         <activity android:name=".PatientRegisterActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         <activity android:name=".PatientActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
         <activity android:name=".DoctorViewActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
-        <activity android:name=".MakeNewAppointmentActivity" android:theme="@android:style/Theme.Light.NoTitleBar"> </activity>
+        <activity android:name=".MakeNewAppointmentActivity" android:theme="@android:style/Theme.Light"> </activity>
         
         
         <provider android:name=".providers.DoctorContentProvider"
