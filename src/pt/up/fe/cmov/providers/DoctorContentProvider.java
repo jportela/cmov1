@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Person;
+import pt.up.fe.cmov.entities.Speciality;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -62,7 +63,7 @@ public class DoctorContentProvider extends ContentProvider {
         }
     }
 
-    private DatabaseHelper dbHelper;
+    private static DatabaseHelper dbHelper;
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
@@ -121,6 +122,14 @@ public class DoctorContentProvider extends ContentProvider {
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
         return true;
+    }
+    
+    public static Cursor queryDoctorInnerJoinSpeciality(){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_NAME + ",d._id,s._id" + 
+    			" FROM " + DOCTORS_TABLE_NAME + " d INNER JOIN  " + SpecialityContentProvider.SPECIALITIES_TABLE_NAME +
+    			" s ON d.speciality_id=s._id ORDER BY s." + Person.PERSON_NAME;
+    	return db.rawQuery(MY_QUERY, new String[]{});
     }
 
     @Override

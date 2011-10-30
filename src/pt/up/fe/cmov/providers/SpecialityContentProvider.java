@@ -25,7 +25,7 @@ public class SpecialityContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 7;
 
-    private static final String SPECIALITIES_TABLE_NAME = "specialities";
+    public static final String SPECIALITIES_TABLE_NAME = "specialities";
 
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.specialitycontentprovider";
 

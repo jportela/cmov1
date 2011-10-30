@@ -20,6 +20,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class PatientActivity extends ListActivity {
@@ -64,6 +65,14 @@ public class PatientActivity extends ListActivity {
 	
 		EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);
+		
+		Button newAppointment = (Button) findViewById(R.id.newAppointment);
+		newAppointment.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	Intent k = new Intent(PatientActivity.this, MakeNewAppointmentActivity.class);
+    			startActivity(k);
+            }
+        });
 	}
 
 	@Override

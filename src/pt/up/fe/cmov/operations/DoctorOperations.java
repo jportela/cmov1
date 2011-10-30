@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Person;
 import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.providers.DoctorContentProvider;
 import pt.up.fe.cmov.rest.JSONOperations;
 import pt.up.fe.cmov.rest.RailsRestClient;
 import android.content.ContentUris;
@@ -151,6 +152,20 @@ public class DoctorOperations {
                  String specialityId = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
                  queryDoctors.add(new Doctor(Integer.parseInt(id),name,new Date(birthdate),username,photo,
                                         Speciality.Records.get(Integer.parseInt(specialityId)),password));
+         } 
+        cDoctor.close();
+        return queryDoctors;
+     }
+	
+	 public static ArrayList<Doctor> queryInnerJoinDoctorSpeciality(){
+        ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
+        Cursor cDoctor = DoctorContentProvider.queryDoctorInnerJoinSpeciality(); 
+        while (cDoctor.moveToNext()) { 
+            	 String id = cDoctor.getString(cDoctor.getColumnIndex(Person.PERSON_ID));
+            	 String speciality_id = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_ID));
+                 String doctorName = cDoctor.getString( cDoctor.getColumnIndex(Doctor.PERSON_NAME)); 
+                 String SpecialityName = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_NAME));
+                 queryDoctors.add(new Doctor(Integer.parseInt(id),doctorName,null,SpecialityName,speciality_id,null));
          } 
         cDoctor.close();
         return queryDoctors;
