@@ -126,12 +126,12 @@ public class DoctorContentProvider extends ContentProvider {
     
     public static Cursor queryDoctorInnerJoinSpeciality(){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_NAME + ",d._id,s._id" + 
+    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_SNAME + ",d._id,s._id" + 
     			" FROM " + DOCTORS_TABLE_NAME + " d INNER JOIN  " + SpecialityContentProvider.SPECIALITIES_TABLE_NAME +
-    			" s ON d.speciality_id=s._id ORDER BY s." + Person.PERSON_NAME;
+    			" s ON d.speciality_id=s._id ORDER BY s." + Speciality.SPECIALITY_SNAME;
     	return db.rawQuery(MY_QUERY, new String[]{});
     }
-
+    
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();

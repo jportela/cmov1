@@ -17,7 +17,7 @@ public class Speciality {
 	private String name;
 	
 	public static final String SPECIALITY_ID = "_id";
-	public static final String SPECIALITY_NAME = "name";
+	public static final String SPECIALITY_SNAME = "sname";
 	
 	public static final Uri CONTENT_URI = Uri.parse("content://" + SpecialityContentProvider.AUTHORITY + "/specialities");	
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.specialities";

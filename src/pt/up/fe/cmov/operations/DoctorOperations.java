@@ -164,14 +164,14 @@ public class DoctorOperations {
         while (cDoctor.moveToNext()) { 
             	 String id = cDoctor.getString(cDoctor.getColumnIndex(Person.PERSON_ID));
             	 String speciality_id = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_ID));
-                 String doctorName = cDoctor.getString( cDoctor.getColumnIndex(Doctor.PERSON_NAME)); 
-                 String SpecialityName = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_NAME));
+                 String doctorName = cDoctor.getString( cDoctor.getColumnIndex(Person.PERSON_NAME)); 
+                 String SpecialityName = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_SNAME));
                  queryDoctors.add(new Doctor(Integer.parseInt(id),doctorName,null,SpecialityName,speciality_id,null));
          } 
         cDoctor.close();
         return queryDoctors;
      }
-
+	 
 	public static void createOrUpdateDoctor(Context context, Doctor doctor) {
 		if (getDoctor(context, doctor.getId()) == null) {
 			createDoctor(context, doctor, false);

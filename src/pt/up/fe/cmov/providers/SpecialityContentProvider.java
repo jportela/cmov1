@@ -46,7 +46,7 @@ public class SpecialityContentProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + SPECIALITIES_TABLE_NAME + " (" + Speciality.SPECIALITY_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Speciality.SPECIALITY_NAME + " VARCHAR(255));");
+                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Speciality.SPECIALITY_SNAME + " VARCHAR(255));");
         }
 
         @Override
@@ -172,6 +172,6 @@ public class SpecialityContentProvider extends ContentProvider {
 
         specialitiesProjectionMap = new HashMap<String, String>();
         specialitiesProjectionMap.put(Speciality.SPECIALITY_ID, Speciality.SPECIALITY_ID);
-        specialitiesProjectionMap.put(Speciality.SPECIALITY_NAME, Speciality.SPECIALITY_NAME);
+        specialitiesProjectionMap.put(Speciality.SPECIALITY_SNAME, Speciality.SPECIALITY_SNAME);
     }
 }
