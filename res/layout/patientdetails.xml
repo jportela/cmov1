@@ -6,5 +6,5 @@
   android:layout_height="match_parent">
 <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/textView1" 
     android:gravity="center_vertical|center_horizontal" android:textSize="40sp" android:layout_height="wrap_content" 
-    android:text="Patient Details" android:layout_width="match_parent"></TextView>    
+    android:text="Patient Details" android:textColor = "#0000ff" android:layout_width="match_parent"></TextView>    
 </LinearLayout>

@@ -72,10 +72,10 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	public void run() {
 		while(Thread.currentThread() == thread){
 			try{
-				//docs = DoctorOperations.queryDoctorsRemoteServer(this);
+				docs = DoctorOperations.queryDoctorsRemoteServer(this);
 				pats = PatientOperations.queryPatientsRemoteServer();
 				
-				/*for(Doctor doc:docs){
+				for(Doctor doc:docs){
 		            if(username.equals(doc.getUsername()) && password.equals(doc.getPassword())){
 		                try
 		                {
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 		                	e.getStackTrace();
 		                }
 		            }
-		        }*/
+		        }
 				
 				for(Patient pat:pats){
 		            if(username.equals(pat.getUsername()) && password.equals(pat.getPassword())){
@@ -137,8 +137,8 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	        				runner.interrupt();
 	        			}
 	        			startActivity(k);
-        			}else if( loginPatient != null){
-        				Intent k = new Intent(LoginActivity.this, Cmov1_doctorActivity.class);
+        			}else if(loginPatient != null){
+        				Intent k = new Intent(LoginActivity.this, PatientActivity.class);
 	        			if(thread != null){
 	        				Thread runner = thread;
 	        				thread = null;

@@ -11,7 +11,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -38,21 +38,14 @@ public class PatientRegisterActivity extends Activity implements OnClickListener
         mDateDisplay = (EditText) findViewById(R.id.pickDate);
         patientRegisterDB = (Button) findViewById(R.id.patientRegisterDB);
 
-        mDateDisplay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID);
-            }
-        });
-        
-        mDateDisplay.setOnKeyListener(new View.OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                showDialog(DATE_DIALOG_ID);
-                return false;
-            }
-        });
+        mDateDisplay.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				showDialog(DATE_DIALOG_ID);
+				return false;
+			}
+		});
         
         patientRegisterDB.setOnClickListener(new View.OnClickListener() {
             @Override

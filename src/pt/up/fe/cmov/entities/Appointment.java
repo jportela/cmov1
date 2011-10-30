@@ -24,6 +24,7 @@ public class Appointment {
 		this.id = id;
 		this.patient_id = patient_id;
 		this.schedule_id = schedule_id;
+		this.doctor_id = doctor_id;
 		this.date = date;
 	}
 	

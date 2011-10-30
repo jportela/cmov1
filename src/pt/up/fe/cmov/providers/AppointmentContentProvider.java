@@ -47,7 +47,8 @@ public class AppointmentContentProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" + Appointment.APPOINTMENT_ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT," + Appointment.APPOINTMENT_PATIENT_ID + " INTEGER," 
-                    + Appointment.APPOINTMENT_SCHEDULE_ID + " INTEGER," + Appointment.APPOINTMENT_DATE + " DATETIME,");
+                    + Appointment.APPOINTMENT_DOCTOR_ID + " INTEGER," 
+                    + Appointment.APPOINTMENT_SCHEDULE_ID + " INTEGER," + Appointment.APPOINTMENT_DATE + " DATETIME);");
         }
 
         @Override
@@ -175,6 +176,7 @@ public class AppointmentContentProvider extends ContentProvider {
         appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_ID, Appointment.APPOINTMENT_ID);
         appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_PATIENT_ID, Appointment.APPOINTMENT_PATIENT_ID);
         appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_SCHEDULE_ID,Appointment.APPOINTMENT_SCHEDULE_ID);
+        appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_DOCTOR_ID,Appointment.APPOINTMENT_DOCTOR_ID);
         appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_DATE,Appointment.APPOINTMENT_DATE);
     }
 

@@ -14,6 +14,9 @@ import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,19 +28,24 @@ public class ScheduleActivity extends Activity {
 
 	public static final int PLANNER_SCHEDULE = 1;
 	public static final int APPOINT_SCHEDULE = 2;
-    public static final int DATE_DIALOG_ID = 0;
+    public static final int DIALOG_CONFIRM_APPOINTMENT = 1;
     
     public static final String EXTRA_SCHEDULE_TYPE = "scheduleType";
     public static final String EXTRA_SCHEDULE_START_HOUR = "scheduleStartHour";
     public static final String EXTRA_SCHEDULE_END_HOUR = "scheduleEndHour";
     public static final String EXTRA_SCHEDULE_DOCTOR = "scheduleDoctor";
+	private static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
+    
+    private int doctorId = -1;
+    private int patientId = -1;
 
     private HashMap<String, ScheduleAdapter> days;
     private ArrayList<String> panelOrder;
-    
+        
     private String[] weekdays = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
     
     private int selectedPanel = 0;
+    private ScheduleButton selectedSchedule = null;
     
     private OnClickListener backButtonListener =    
 		new OnClickListener() {
@@ -59,7 +67,19 @@ public class ScheduleActivity extends Activity {
 	        buildGrid();
 		}
 
-    };   
+    };  
+    
+    private OnClickListener scheduleButtonListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			selectedSchedule = (ScheduleButton) v;
+	        showDialog(DIALOG_CONFIRM_APPOINTMENT);
+		}
+
+    }; 
+    
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,15 +118,17 @@ public class ScheduleActivity extends Activity {
 	}
 	
 	private void buildAppoint() {
-		int doctorId = getIntent().getIntExtra(EXTRA_SCHEDULE_DOCTOR, 0);
+		doctorId = getIntent().getIntExtra(EXTRA_SCHEDULE_DOCTOR, 0);
+		patientId = getIntent().getIntExtra(EXTRA_SCHEDULE_PATIENT, 0);
 		
+		patientId = 2;
 		doctorId = 4; //TODO: Dummy
 		
 		SchedulePlan plan = DoctorOperations.getRemoteCurrentPlan(this, doctorId);
 		
 		ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
 		
-		ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(doctorId);
+		ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER, doctorId);
 		
 		HashMap<Integer, ArrayList<Appointment>> scheduleAppointments = new HashMap<Integer, ArrayList<Appointment>>();
 
@@ -146,7 +168,7 @@ public class ScheduleActivity extends Activity {
 				Appointment selectedApp = null;
 				for (int k=0; k < apps.size(); k++) {
 					Appointment app = apps.get(k);
-					long appBlock = (endDate.getTime() - app.getDate().getTime()) / (1000*60*30);
+					long appBlock = blocks - ((endDate.getTime() - app.getDate().getTime()) / (1000*60*30));
 					if (appBlock == j) {
 						selectedApp = app;
 						break;
@@ -157,10 +179,12 @@ public class ScheduleActivity extends Activity {
 				
 				int id = c1.get(Calendar.HOUR) * 2 + c1.get(Calendar.MINUTE)/30;
 				ScheduleButton button = null;
-				if (selectedApp == null)
-					button = new ScheduleButton(this, id);
+				if (selectedApp == null) {
+					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone());
+					button.setOnClickListener(scheduleButtonListener);
+				}
 				else
-					button = new ScheduleButton(this, id, selectedApp);
+					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone(), selectedApp);
 				
 				String label = weekdays[c1.get(Calendar.DAY_OF_WEEK) - 1] + " - " + c1.get(Calendar.DAY_OF_MONTH) + "/" + (c1.get(Calendar.MONTH) + 1);
 				
@@ -210,6 +234,49 @@ public class ScheduleActivity extends Activity {
 		else {
 			nextButton.setVisibility(View.VISIBLE);
 		}		
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+	    Dialog dialog = null;
+	    switch(id) {
+	    case DIALOG_CONFIRM_APPOINTMENT:
+	    	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    	builder.setMessage("You are scheduling an appointment at " + selectedSchedule.getDate().toString() + ". Schedule this appointment?")
+	    	       .setCancelable(false)
+	    	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	    	           public void onClick(DialogInterface dialog, int id) {
+	    	                scheduleAppointment();
+	    	           }
+	    	       })
+	    	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	    	           public void onClick(DialogInterface dialog, int id) {
+	    	                dialog.cancel();
+	    	           }
+	    	       });
+	    	dialog = builder.create();
+	    	break;
+	    default:
+	        break;
+	    }
+	    return dialog;
+	}
+	
+	@Override
+	protected void onPrepareDialog (int id, Dialog dialog, Bundle args) {
+		AlertDialog alertDialog = (AlertDialog) dialog;
+		alertDialog.setMessage("You are scheduling an appointment at " + selectedSchedule.getDate().toString() + ". Schedule this appointment?");
+	}
+	
+	private void scheduleAppointment() {
+		Appointment appointment = new Appointment(-1, patientId, selectedSchedule.getScheduleId(), doctorId, selectedSchedule.getDate());
+		
+		AppointmentOperations.createAppointment(this, appointment);
+		
+		selectedSchedule.setAppointment(appointment);
+		selectedSchedule.toggleState();
+		selectedSchedule.setOnClickListener(null);
+		
 	}
 	
     

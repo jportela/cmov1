@@ -101,10 +101,10 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 		return null;
 	}
 	
-	public static ArrayList<Appointment> getRemoteServerAllAppointment(int doctor_id) {
+	public static ArrayList<Appointment> getRemoteServerAllAppointment(String controller,int person_id) {
 		ArrayList<Appointment> queryAppointments = new ArrayList<Appointment>();
-        JSONArray jsonArrays = RailsRestClient.GetArray(DoctorOperations.DOCTOR_CONTROLER + "/" 
-        					   + Integer.toString(doctor_id) + "/" + APPOINTMENT_CONTROLER);
+        JSONArray jsonArrays = RailsRestClient.GetArray(controller + "/" 
+        					   + Integer.toString(person_id) + "/" + APPOINTMENT_CONTROLER);
         for(int i = 0; i < jsonArrays.length();i++){
         	try {
         		queryAppointments.add(JSONOperations.JSONToAppointment(jsonArrays.getJSONObject(i)));
