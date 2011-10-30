@@ -10,7 +10,7 @@
     <string name="plannerToLabel">to</string>
     <string name="plannerLabel">Schedule Plan:</string>
     <string name="cancel">Cancel</string>
-    <string name="confirm">Confirm</string>
+    <string name="confirm">Create</string>
     <string name="createSchedule">Create Schedule</string>
     <string-array name="weekdays_array">
         <item>Monday</item>

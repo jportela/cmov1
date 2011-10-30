@@ -70,13 +70,22 @@ public class PlannerActivity extends Activity {
 
     };
     
+    private OnClickListener cancelListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			PlannerActivity.this.finish();
+		}
+    };
+    
     private OnClickListener confirmListener =    
 		new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			if (mYear == 0)	{
-				Toast.makeText(PlannerActivity.this, "Please add a Start Date", Toast.LENGTH_LONG);
+				Toast.makeText(PlannerActivity.this, "Please add a Start Date", Toast.LENGTH_LONG).show();
 				return;
 			}
 			Date date = new Date(mYear-1900, mMonth, mDay);
@@ -109,7 +118,7 @@ public class PlannerActivity extends Activity {
 				Log.i("Planner", "End Hour: " + endHour);
 				
 				if (startHour == endHour) {
-					Toast.makeText(PlannerActivity.this, "Start and End hour cannot be the same", Toast.LENGTH_LONG);
+					Toast.makeText(PlannerActivity.this, "Start and End hour cannot be the same", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
@@ -129,11 +138,20 @@ public class PlannerActivity extends Activity {
 			
 			int planId = SchedulePlanOperations.createSchedulePlan(PlannerActivity.this, plan, true);
 			
+			if (planId <= 0) {
+				Toast.makeText(PlannerActivity.this, "Schedule Creation failed", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			for (int i=0; i < schedules.size(); i++) {
 				Schedule schedule = schedules.get(i);
 				schedule.setSchedulePlanId(planId);
 				ScheduleOperations.createSchedule(PlannerActivity.this, schedule, true);
 			}
+			
+			Toast.makeText(PlannerActivity.this, "Schedule creation starting at " + date.toString() + " succeeded!", Toast.LENGTH_LONG).show();
+			PlannerActivity.this.finish();
+
 		}
 
     };
@@ -170,7 +188,7 @@ public class PlannerActivity extends Activity {
         
         if (mDoctorId == 0)
         {
-        	Toast.makeText(this, "No doctor associated with this planner", Toast.LENGTH_LONG);
+        	Toast.makeText(this, "No doctor associated with this planner", Toast.LENGTH_LONG).show();
         }
         
         Button b = (Button) findViewById(R.id.datePickerButton);
@@ -178,6 +196,9 @@ public class PlannerActivity extends Activity {
         
         Button confirm = (Button) findViewById(R.id.confirmButton);
         confirm.setOnClickListener(confirmListener);
+        
+        Button cancel = (Button) findViewById(R.id.cancelButton);
+        cancel.setOnClickListener(cancelListener);
         
         addPlannerRow();        
         
