@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import pt.up.fe.cmov.entities.Doctor;
 
 import android.app.ExpandableListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -16,15 +17,14 @@ import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 import pt.up.fe.cmov.operations.DoctorOperations;
 
 public class MakeNewAppointmentActivity extends ExpandableListActivity {
 
     ExpandableListAdapter mAdapter;
 	ArrayList<Doctor> docs; 
+	static public Doctor selectedDoctor;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
 
         // Set up our adapter
         mAdapter = new MyExpandableListAdapter();
+        getExpandableListView().setOnChildClickListener(this);
         setListAdapter(mAdapter);
         registerForContextMenu(getExpandableListView());
     }
@@ -41,28 +42,20 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         menu.setHeaderTitle("Sample menu");
-        menu.add(0, 0, 0, "lulz");
+        menu.add(0, 0, 0, "le menu");
+    }
+    
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+            int childPosition, long id) {
+    		selectedDoctor = ((MyExpandableListAdapter)mAdapter).children.get(groupPosition).get(childPosition);
+    		/* Escreve a activity aqui... *
+    		Intent k = new Intent(MakeNewAppointmentActivity.this, DoctorViewActivity.class);
+			startActivity(k);*/
+        return true;
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-
-        String title = ((TextView) info.targetView).getText().toString();
-
-        int type = ExpandableListView.getPackedPositionType(info.packedPosition);
-        if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition); 
-            int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition); 
-            Toast.makeText(this, title + ": Child " + childPos + " clicked in group " + groupPos,
-                    Toast.LENGTH_LONG).show();
-            return true;
-        } else if (type == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition); 
-            Toast.makeText(this, title + ": Group " + groupPos + " clicked", Toast.LENGTH_LONG).show();
-            return true;
-        }
-
         return false;
     }
 
@@ -75,7 +68,7 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
     public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     
         private ArrayList<String> groups = getGroups();
-        private ArrayList<ArrayList<String>> children = getChildren();
+        public ArrayList<ArrayList<Doctor>> children = getChildren();
         
         public ArrayList<String> getGroups(){
         	ArrayList<String> specs = new  ArrayList<String>();
@@ -85,26 +78,26 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
         	return specs;
         }
         
-        public ArrayList<ArrayList<String>> getChildren(){
+        public ArrayList<ArrayList<Doctor>> getChildren(){
         	int j = -1; String specName = new String();
-        	ArrayList<ArrayList<String>> doctors = new ArrayList<ArrayList<String>>();
-        	ArrayList<String> docts;
+        	ArrayList<ArrayList<Doctor>> doctors = new ArrayList<ArrayList<Doctor>>();
+        	ArrayList<Doctor> docts;
         	for(int i = 0; i < docs.size();i++){
         		if(!specName.equals(docs.get(i).getUsername())){
         			specName = docs.get(i).getUsername();
         			j++;
-        			docts = new ArrayList<String>();
+        			docts = new ArrayList<Doctor>();
         			doctors.add(docts);
         		}
         		
         		if(specName.equals(docs.get(i).getUsername()))
-        			doctors.get(j).add(docs.get(i).getName());			
+        			doctors.get(j).add(new Doctor(docs.get(i).getId(),docs.get(i).getName(),null,null,null,null,null));			
     		}
         	return doctors;
         }
 
         public Object getChild(int groupPosition, int childPosition) {
-            return children.get(groupPosition).get(childPosition);
+            return children.get(groupPosition).get(childPosition).getName();
         }
 
         public long getChildId(int groupPosition, int childPosition) {
