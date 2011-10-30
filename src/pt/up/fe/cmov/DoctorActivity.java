@@ -4,6 +4,7 @@ package pt.up.fe.cmov;
 import java.util.ArrayList;
 
 import pt.up.fe.cmov.entities.Appointment;
+import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.listadapter.EntryAdapter;
 import pt.up.fe.cmov.listadapter.EntryItem;
@@ -26,6 +27,19 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
     public static ArrayList<Appointment> appointments = new ArrayList<Appointment>();
     ArrayList<Item> items = new ArrayList<Item>();
 
+	private OnClickListener scheduleButtonListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Doctor doctor = LoginActivity.loginDoctor;
+			int doctorId = doctor.getId();
+			Intent scheduleIntent = new Intent(DoctorActivity.this, ScheduleActivity.class);
+			scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_TYPE, ScheduleActivity.VIEW_SCHEDULE);
+			scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_DOCTOR, doctorId);
+			startActivity(scheduleIntent);
+		}
+	};
+    
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +66,9 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
         
         final Button button = (Button) findViewById(R.id.appointmentsButton);
         button.setOnClickListener(this);
+        
+        Button scheduleButton = (Button) findViewById(R.id.scheduleButton);
+		scheduleButton.setOnClickListener(scheduleButtonListener);
 	}
 
 	@Override

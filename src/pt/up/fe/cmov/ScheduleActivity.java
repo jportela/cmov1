@@ -17,7 +17,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,13 +28,11 @@ import android.widget.TextView;
 
 public class ScheduleActivity extends Activity {
 
-	public static final int PLANNER_SCHEDULE = 1;
+	public static final int VIEW_SCHEDULE = 1;
 	public static final int APPOINT_SCHEDULE = 2;
     public static final int DIALOG_CONFIRM_APPOINTMENT = 1;
     
     public static final String EXTRA_SCHEDULE_TYPE = "scheduleType";
-    public static final String EXTRA_SCHEDULE_START_HOUR = "scheduleStartHour";
-    public static final String EXTRA_SCHEDULE_END_HOUR = "scheduleEndHour";
     public static final String EXTRA_SCHEDULE_DOCTOR = "scheduleDoctor";
 	private static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
     
@@ -46,6 +46,7 @@ public class ScheduleActivity extends Activity {
     
     private int selectedPanel = 0;
     private ScheduleButton selectedSchedule = null;
+    private int scheduleType;
     
     private OnClickListener backButtonListener =    
 		new OnClickListener() {
@@ -75,7 +76,23 @@ public class ScheduleActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			selectedSchedule = (ScheduleButton) v;
-	        showDialog(DIALOG_CONFIRM_APPOINTMENT);
+			if (scheduleType == APPOINT_SCHEDULE)
+				showDialog(DIALOG_CONFIRM_APPOINTMENT);
+			else if (scheduleType == VIEW_SCHEDULE) {
+				Log.i("SCHEDULE", "Show appointment info: " + selectedSchedule.getAppointment().getDate().toString());
+			}
+		}
+
+    };     
+    
+    private OnClickListener createScheduleListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			Intent plannerIntent = new Intent(ScheduleActivity.this, PlannerActivity.class);
+			plannerIntent.putExtra(PlannerActivity.PLANNER_DOCTOR_ID, doctorId);
+			startActivity(plannerIntent);
 		}
 
     }; 
@@ -85,7 +102,7 @@ public class ScheduleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scheduleplanner);
         
-        int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, APPOINT_SCHEDULE);
+        scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, VIEW_SCHEDULE);
         //int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, PLANNER_SCHEDULE);
         
         days = new HashMap<String, ScheduleAdapter>();
@@ -97,18 +114,24 @@ public class ScheduleActivity extends Activity {
 		backButton.setOnClickListener(backButtonListener);
 		nextButton.setOnClickListener(nextButtonListener);
 		
-        buildTableLayout(scheduleType);
+        buildTableLayout();
         
         
         //linear.addView(text);
 	}
 	
-	private void buildTableLayout(int scheduleType) {
-		
+	private void buildTableLayout() {
+		Button createSchedule = (Button) findViewById(R.id.createSchedule);
+
 		switch(scheduleType) {
-		case PLANNER_SCHEDULE:
+		case VIEW_SCHEDULE:
+			createSchedule.setVisibility(View.VISIBLE);
+			createSchedule.setOnClickListener(createScheduleListener);
+			buildAppoint();
+			buildGrid();
             break;
 		case APPOINT_SCHEDULE:
+			createSchedule.setVisibility(View.GONE);
 			buildAppoint();
 			buildGrid();
 			break;
@@ -181,11 +204,15 @@ public class ScheduleActivity extends Activity {
 				ScheduleButton button = null;
 				if (selectedApp == null) {
 					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone());
-					button.setOnClickListener(scheduleButtonListener);
+					
+					if (scheduleType == APPOINT_SCHEDULE)
+						button.setOnClickListener(scheduleButtonListener);
 				}
-				else
+				else {
 					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone(), selectedApp);
-				
+					if (scheduleType == VIEW_SCHEDULE)
+						button.setOnClickListener(scheduleButtonListener);
+				}
 				String label = weekdays[c1.get(Calendar.DAY_OF_WEEK) - 1] + " - " + c1.get(Calendar.DAY_OF_MONTH) + "/" + (c1.get(Calendar.MONTH) + 1);
 				
 				if (!panelOrder.contains(label))
@@ -278,55 +305,6 @@ public class ScheduleActivity extends Activity {
 		selectedSchedule.setOnClickListener(null);
 		
 	}
-	
-    
-//    private void buildPlannerTable() {
-//        TableLayout scheduleTable = (TableLayout)findViewById(R.id.scheduleTable);
-//
-//        int startTime = getIntent().getIntExtra(EXTRA_SCHEDULE_START_HOUR, 0);
-//        int endTime = getIntent().getIntExtra(EXTRA_SCHEDULE_END_HOUR, 24);
-//    	TableRow row = null;
-//
-//        for (int i=startTime; i < (endTime-startTime)*2; i++) {
-//        	if (i%2==0)
-//        		row = new TableRow(this);
-//        	
-//        	row.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-//        	
-//        	ScheduleButton fullHour = new ScheduleButton(this, i);
-//        	
-//        	fullHour.setLayoutParams(new TableRow.LayoutParams(i % 2));	//android:layout_column="0/1"
-//        	fullHour.setPadding(10, 10, 10, 10);
-//        	fullHour.setGravity(Gravity.CENTER);
-//        	fullHour.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);        	
-//        	
-//        	row.addView(fullHour);
-//        	
-//        	if (i % 2 == 1)
-//        		scheduleTable.addView(row);
-//        }
-//	}
-    
-    /*private void buildTable() {
-        GridView scheduleTable = (GridView)findViewById(R.id.scheduleTable);
 
-        int startTime = getIntent().getIntExtra(EXTRA_SCHEDULE_START_HOUR, 0);
-        int endTime = getIntent().getIntExtra(EXTRA_SCHEDULE_END_HOUR, 24);
-
-        ScheduleAdapter adapter = new ScheduleAdapter(this);
-        
-        for (int i=startTime; i < (endTime-startTime)*2; i++) {
-        	        	        	
-        	ScheduleButton fullHour = new ScheduleButton(this, i);
-        	
-        	fullHour.setPadding(10, 10, 10, 10);
-        	fullHour.setGravity(Gravity.CENTER);
-        	fullHour.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);        	
-        	
-        	adapter.addSchedule(fullHour);
-        }
-        
-        scheduleTable.setAdapter(adapter);
-	}*/
 	
 }
