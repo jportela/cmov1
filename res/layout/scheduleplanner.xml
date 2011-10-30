@@ -15,10 +15,9 @@
 	        android:background="@drawable/arrowleft" />
 	        
         <TextView 
-        	android:id="@+id/editText1" 
+        	android:id="@+id/scheduleLabel" 
 			android:layout_width="wrap_content"
  	       	android:layout_height="wrap_content"
-         	android:text="Dummy" 
         	android:layout_centerHorizontal="true"
         	android:layout_centerVertical="true"
         	android:textSize="25dp">
@@ -34,11 +33,8 @@
 	      	android:layout_alignParentRight="true"/>
    	</RelativeLayout>
     
-    <ScrollView android:layout_width="match_parent" android:layout_height="fill_parent" android:id="@+id/scheduleScrollView" android:paddingTop="10dp">    
+    <GridView android:id="@+id/scheduleTable" android:layout_width="match_parent" android:layout_height="fill_parent" android:stretchMode="columnWidth" android:numColumns="2">
+   	
+    </GridView>
     
-	    <TableLayout android:id="@+id/scheduleTable" android:layout_width="match_parent" android:layout_height="wrap_content" android:stretchColumns="0,1">
-	   	
-	    </TableLayout>
-	    
-    </ScrollView>
 </LinearLayout>

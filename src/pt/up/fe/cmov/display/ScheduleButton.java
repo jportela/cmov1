@@ -38,7 +38,7 @@ public class ScheduleButton extends Button {
 		this.appointment = null;
 		this.setText(calculateTimeString());
 		this.getBackground().setColorFilter(GREEN_COLOR_FILTER);
-		this.setOnClickListener(scheduleButtonListener);
+		//this.setOnClickListener(scheduleButtonListener);
 	}
 	
 	public ScheduleButton(Context context, int id, Appointment appointment) {
@@ -48,7 +48,7 @@ public class ScheduleButton extends Button {
 		this.appointment = appointment;
 		this.setText(calculateTimeString());
 		this.getBackground().setColorFilter(RED_COLOR_FILTER);
-		this.setOnClickListener(scheduleButtonListener);
+		//this.setOnClickListener(scheduleButtonListener);
 	}
 	
 	public void toggleState() {

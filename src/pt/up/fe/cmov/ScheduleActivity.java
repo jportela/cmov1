@@ -1,19 +1,25 @@
 package pt.up.fe.cmov;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
+import pt.up.fe.cmov.display.ScheduleAdapter;
 import pt.up.fe.cmov.display.ScheduleButton;
+import pt.up.fe.cmov.entities.Appointment;
+import pt.up.fe.cmov.entities.Schedule;
+import pt.up.fe.cmov.entities.SchedulePlan;
+import pt.up.fe.cmov.operations.AppointmentOperations;
+import pt.up.fe.cmov.operations.DoctorOperations;
+import pt.up.fe.cmov.operations.ScheduleOperations;
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.DatePicker;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.TextView;
 
 public class ScheduleActivity extends Activity {
 
@@ -24,20 +30,55 @@ public class ScheduleActivity extends Activity {
     public static final String EXTRA_SCHEDULE_TYPE = "scheduleType";
     public static final String EXTRA_SCHEDULE_START_HOUR = "scheduleStartHour";
     public static final String EXTRA_SCHEDULE_END_HOUR = "scheduleEndHour";
-    public static final String EXTRA_SCHEDULE_APPOINTMENT = "scheduleAppointment";
+    public static final String EXTRA_SCHEDULE_DOCTOR = "scheduleDoctor";
 
-    private int mYear;
-    private int mMonth;
-    private int mDay;
+    private HashMap<String, ScheduleAdapter> days;
+    private ArrayList<String> panelOrder;
     
+    private String[] weekdays = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+    
+    private int selectedPanel = 0;
+    
+    private OnClickListener backButtonListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+	        selectedPanel--;
+	        buildGrid();
+		}
+
+    };   
+    
+    private OnClickListener nextButtonListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+	        selectedPanel++;
+	        buildGrid();
+		}
+
+    };   
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scheduleplanner);
         
-        int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, PLANNER_SCHEDULE);
+        int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, APPOINT_SCHEDULE);
+        //int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, PLANNER_SCHEDULE);
         
+        days = new HashMap<String, ScheduleAdapter>();
+        panelOrder = new ArrayList<String>();
+        
+        Button backButton = (Button) findViewById(R.id.backScheduleButton);
+		Button nextButton = (Button) findViewById(R.id.nextScheduleButton);
+
+		backButton.setOnClickListener(backButtonListener);
+		nextButton.setOnClickListener(nextButtonListener);
+		
         buildTableLayout(scheduleType);
+        
         
         //linear.addView(text);
 	}
@@ -46,81 +87,179 @@ public class ScheduleActivity extends Activity {
 		
 		switch(scheduleType) {
 		case PLANNER_SCHEDULE:
-            buildPlanner();
             break;
 		case APPOINT_SCHEDULE:
 			buildAppoint();
+			buildGrid();
 			break;
 		default:
 			break;
 		}
 	}
 	
-	private void buildPlanner() {
-		final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
-		
-		showDialog(DATE_DIALOG_ID);
-		
-		Log.i("DATE", "Day: " + Integer.toString(mDay));
-		
-	}
-	
 	private void buildAppoint() {
-		// TODO Auto-generated method stub
+		int doctorId = getIntent().getIntExtra(EXTRA_SCHEDULE_DOCTOR, 0);
+		
+		doctorId = 4; //TODO: Dummy
+		
+		SchedulePlan plan = DoctorOperations.getRemoteCurrentPlan(this, doctorId);
+		
+		ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
+		
+		ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(doctorId);
+		
+		HashMap<Integer, ArrayList<Appointment>> scheduleAppointments = new HashMap<Integer, ArrayList<Appointment>>();
+
+		for (int i=0; i < appointments.size(); i++) {
+			Appointment appointment = appointments.get(i);
+			int scheduleId = appointment.getScheduleId();
+			
+			if (scheduleAppointments.containsKey(scheduleId)) {
+				ArrayList<Appointment> apps = scheduleAppointments.get(scheduleId);
+				apps.add(appointment);
+			}
+			else {
+				ArrayList<Appointment> apps = new ArrayList<Appointment>();
+				apps.add(appointment);
+				scheduleAppointments.put(scheduleId, apps);
+			}
+		}
+		
+		for (int i=0; i < schedules.size(); i++) {
+			Schedule schedule = schedules.get(i);
+			Date startDate = schedule.getStartDate();	
+			Date endDate = schedule.getEndDate();
+			
+			ArrayList<Appointment> apps = scheduleAppointments.get(schedule.getId());
+			
+			if (apps == null) {
+				apps = new ArrayList<Appointment>();
+			}
+
+			
+			long blocks = (endDate.getTime() - startDate.getTime()) / (1000*60*30);
+			
+			Calendar c1 = Calendar.getInstance();
+			c1.setTime(startDate);
+
+			for (int j=0; j < blocks; j++) {
+				Appointment selectedApp = null;
+				for (int k=0; k < apps.size(); k++) {
+					Appointment app = apps.get(k);
+					long appBlock = (endDate.getTime() - app.getDate().getTime()) / (1000*60*30);
+					if (appBlock == j) {
+						selectedApp = app;
+						break;
+					}
+				}
+				
+				
+				
+				int id = c1.get(Calendar.HOUR) * 2 + c1.get(Calendar.MINUTE)/30;
+				ScheduleButton button = null;
+				if (selectedApp == null)
+					button = new ScheduleButton(this, id);
+				else
+					button = new ScheduleButton(this, id, selectedApp);
+				
+				String label = weekdays[c1.get(Calendar.DAY_OF_WEEK) - 1] + " - " + c1.get(Calendar.DAY_OF_MONTH) + "/" + (c1.get(Calendar.MONTH) + 1);
+				
+				if (!panelOrder.contains(label))
+				{
+					panelOrder.add(label);
+				}
+				
+				if (days.containsKey(label)) {
+					ScheduleAdapter adapter = days.get(label);
+					adapter.addSchedule(button);
+				}
+				else {
+					ScheduleAdapter adapter = new ScheduleAdapter(this);
+					adapter.addSchedule(button);
+					days.put(label, adapter);
+				}
+				
+				c1.add(Calendar.MINUTE, 30);
+				
+			}
+		}	
 	}
 	
-	private DatePickerDialog.OnDateSetListener mDateSetListener =
-	      new DatePickerDialog.OnDateSetListener() {
+	private void buildGrid() {
+		String label = panelOrder.get(selectedPanel);
+		ScheduleAdapter adapter = days.get(label);
+		GridView scheduleTable = (GridView)findViewById(R.id.scheduleTable);
+		scheduleTable.setAdapter(adapter);
+		
+		TextView scheduleLabel = (TextView) findViewById(R.id.scheduleLabel);
+		scheduleLabel.setText(label);
+		
+		Button backButton = (Button) findViewById(R.id.backScheduleButton);
+		Button nextButton = (Button) findViewById(R.id.nextScheduleButton);
 
-        public void onDateSet(DatePicker view, int year, 
-                              int monthOfYear, int dayOfMonth) {
-            mYear = year;
-            mMonth = monthOfYear;
-            mDay = dayOfMonth;
-            
-            buildPlannerTable();
-        }
-
-    };
+		if (selectedPanel == 0) {
+			backButton.setVisibility(View.INVISIBLE);
+		}
+		else {
+			backButton.setVisibility(View.VISIBLE);
+		}
+		
+		if (selectedPanel >= panelOrder.size() - 1) {
+			nextButton.setVisibility(View.INVISIBLE);
+		}
+		else {
+			nextButton.setVisibility(View.VISIBLE);
+		}		
+	}
+	
     
-    private void buildPlannerTable() {
-        TableLayout scheduleTable = (TableLayout)findViewById(R.id.scheduleTable);
+//    private void buildPlannerTable() {
+//        TableLayout scheduleTable = (TableLayout)findViewById(R.id.scheduleTable);
+//
+//        int startTime = getIntent().getIntExtra(EXTRA_SCHEDULE_START_HOUR, 0);
+//        int endTime = getIntent().getIntExtra(EXTRA_SCHEDULE_END_HOUR, 24);
+//    	TableRow row = null;
+//
+//        for (int i=startTime; i < (endTime-startTime)*2; i++) {
+//        	if (i%2==0)
+//        		row = new TableRow(this);
+//        	
+//        	row.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+//        	
+//        	ScheduleButton fullHour = new ScheduleButton(this, i);
+//        	
+//        	fullHour.setLayoutParams(new TableRow.LayoutParams(i % 2));	//android:layout_column="0/1"
+//        	fullHour.setPadding(10, 10, 10, 10);
+//        	fullHour.setGravity(Gravity.CENTER);
+//        	fullHour.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);        	
+//        	
+//        	row.addView(fullHour);
+//        	
+//        	if (i % 2 == 1)
+//        		scheduleTable.addView(row);
+//        }
+//	}
+    
+    /*private void buildTable() {
+        GridView scheduleTable = (GridView)findViewById(R.id.scheduleTable);
 
         int startTime = getIntent().getIntExtra(EXTRA_SCHEDULE_START_HOUR, 0);
         int endTime = getIntent().getIntExtra(EXTRA_SCHEDULE_END_HOUR, 24);
-    	TableRow row = null;
 
+        ScheduleAdapter adapter = new ScheduleAdapter(this);
+        
         for (int i=startTime; i < (endTime-startTime)*2; i++) {
-        	if (i%2==0)
-        		row = new TableRow(this);
-        	
-        	row.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-        	
+        	        	        	
         	ScheduleButton fullHour = new ScheduleButton(this, i);
         	
-        	fullHour.setLayoutParams(new TableRow.LayoutParams(i % 2));	//android:layout_column="0/1"
         	fullHour.setPadding(10, 10, 10, 10);
         	fullHour.setGravity(Gravity.CENTER);
         	fullHour.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);        	
         	
-        	row.addView(fullHour);
-        	
-        	if (i % 2 == 1)
-        		scheduleTable.addView(row);
+        	adapter.addSchedule(fullHour);
         }
-	}
+        
+        scheduleTable.setAdapter(adapter);
+	}*/
 	
-	@Override
-	protected Dialog onCreateDialog(int id) {
-	    switch (id) {
-	    case DATE_DIALOG_ID:
-	        return new DatePickerDialog(this,
-	                    mDateSetListener,
-	                    mYear, mMonth, mDay);
-	    }
-	    return null;
-	}
 }
