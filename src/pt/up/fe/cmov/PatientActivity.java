@@ -48,7 +48,6 @@ public class PatientActivity extends ListActivity {
 
 	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
 
-			
 			items.add(new EntryItem(i,doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
 					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
 		}
@@ -68,8 +67,8 @@ public class PatientActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if(!items.get(position).isSection()){
-			int pos = ((EntryItem)items.get(position)).getPos();
+		if(!items.get(position-1).isSection()){
+			int pos = ((EntryItem)items.get(position-1)).getPos();
 			PatientActivity.doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(pos).getDoctorId());
 			Intent k = new Intent(PatientActivity.this, DoctorViewActivity.class);
 			startActivity(k);

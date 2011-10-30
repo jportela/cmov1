@@ -80,8 +80,8 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if(!items.get(position).isSection()){
-			int pos = ((EntryItem)items.get(position)).getPos();
+		if(!items.get(position-1).isSection()){
+			int pos = ((EntryItem)items.get(position-1)).getPos();
 			ListAppointmentActivity.p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(pos).getPatientId());
 			Intent k = new Intent(DoctorActivity.this, PatientViewActivity.class);
 			startActivity(k);
