@@ -3,10 +3,12 @@ package pt.up.fe.cmov;
 import java.util.ArrayList;
 
 import pt.up.fe.cmov.entities.Doctor;
-
+import pt.up.fe.cmov.entities.Patient;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import android.app.ExpandableListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
@@ -18,7 +20,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import pt.up.fe.cmov.operations.DoctorOperations;
 
 public class MakeNewAppointmentActivity extends ExpandableListActivity {
 
@@ -48,9 +49,14 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
             int childPosition, long id) {
     		selectedDoctor = ((MyExpandableListAdapter)mAdapter).children.get(groupPosition).get(childPosition);
-    		/* Escreve a activity aqui... *
-    		Intent k = new Intent(MakeNewAppointmentActivity.this, DoctorViewActivity.class);
-			startActivity(k);*/
+    		Log.i("DOO", "DOCTOR ID: " + selectedDoctor.getId());
+    		Patient patient = LoginActivity.loginPatient;
+            int patientId = patient.getId();
+            Intent scheduleIntent = new Intent(MakeNewAppointmentActivity.this, ScheduleActivity.class);
+            scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_TYPE, ScheduleActivity.APPOINT_SCHEDULE);
+            scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_DOCTOR, selectedDoctor.getId());
+            scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_PATIENT, patientId);
+            startActivity(scheduleIntent);
         return true;
     }
 

@@ -39,4 +39,8 @@ public class ScheduleAdapter extends BaseAdapter {
 	public void addSchedule(ScheduleButton button) {
 		buttons.add(button);
 	}
+	
+	public void addSchedule(int index, ScheduleButton button) {
+		buttons.add(index, button);
+	}
 }

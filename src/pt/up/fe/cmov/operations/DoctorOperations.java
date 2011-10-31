@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Person;
 import pt.up.fe.cmov.entities.SchedulePlan;
@@ -185,6 +186,35 @@ public class DoctorOperations {
 		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plan");
 		try {
 			 return JSONOperations.JSONToSchedulePlan(json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static ArrayList<SchedulePlan> getRemoteCurrentPlans(Context context, int doctorId){
+		JSONArray json = RailsRestClient.GetArray(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plans");
+		ArrayList<SchedulePlan> plans = new ArrayList<SchedulePlan>();
+		try {
+			for (int i=0; i < json.length(); i++) {
+				plans.add(JSONOperations.JSONToSchedulePlan(json.getJSONObject(i)));
+			}
+			return plans;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Appointment getFurthestAppointment(Context context, int doctorId) {
+		
+		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/furthest_appointment");
+		try {
+			 return JSONOperations.JSONToAppointment(json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

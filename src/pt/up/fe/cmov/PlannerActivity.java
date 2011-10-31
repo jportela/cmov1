@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
 import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
@@ -70,13 +72,22 @@ public class PlannerActivity extends Activity {
 
     };
     
+    private OnClickListener cancelListener =    
+		new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			PlannerActivity.this.finish();
+		}
+    };
+    
     private OnClickListener confirmListener =    
 		new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			if (mYear == 0)	{
-				Toast.makeText(PlannerActivity.this, "Please add a Start Date", Toast.LENGTH_LONG);
+				Toast.makeText(PlannerActivity.this, "Please add a Start Date", Toast.LENGTH_LONG).show();
 				return;
 			}
 			Date date = new Date(mYear-1900, mMonth, mDay);
@@ -109,7 +120,7 @@ public class PlannerActivity extends Activity {
 				Log.i("Planner", "End Hour: " + endHour);
 				
 				if (startHour == endHour) {
-					Toast.makeText(PlannerActivity.this, "Start and End hour cannot be the same", Toast.LENGTH_LONG);
+					Toast.makeText(PlannerActivity.this, "Start and End hour cannot be the same", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
@@ -129,11 +140,20 @@ public class PlannerActivity extends Activity {
 			
 			int planId = SchedulePlanOperations.createSchedulePlan(PlannerActivity.this, plan, true);
 			
+			if (planId <= 0) {
+				Toast.makeText(PlannerActivity.this, "Schedule Creation failed", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			for (int i=0; i < schedules.size(); i++) {
 				Schedule schedule = schedules.get(i);
 				schedule.setSchedulePlanId(planId);
 				ScheduleOperations.createSchedule(PlannerActivity.this, schedule, true);
 			}
+			
+			Toast.makeText(PlannerActivity.this, "Schedule creation starting at " + date.toString() + " succeeded!", Toast.LENGTH_LONG).show();
+			PlannerActivity.this.finish();
+
 		}
 
     };
@@ -150,13 +170,28 @@ public class PlannerActivity extends Activity {
 
       public void onDateSet(DatePicker view, int year, 
                             int monthOfYear, int dayOfMonth) {
-          mYear = year;
-          mMonth = monthOfYear;
-          mDay = dayOfMonth;
-          
-          Button b = (Button) findViewById(R.id.datePickerButton);
-          String text = "" + mDay + "/" + (mMonth+1) + "/" + mYear;
-          b.setText(text);
+    	  
+    	  Appointment furthest = DoctorOperations.getFurthestAppointment(PlannerActivity.this, mDoctorId);
+    	  Date furthest_date = null;
+    	  Date this_date = null;
+    	  
+    	  if (furthest != null)
+    	  {
+	    	  furthest_date = furthest.getDate();
+	    	  this_date = new Date(year-1900, monthOfYear, dayOfMonth);
+    	  }
+    	  if (furthest == null || this_date.getTime() > furthest_date.getTime()) {
+	          mYear = year;
+	          mMonth = monthOfYear;
+	          mDay = dayOfMonth;
+	          
+	          Button b = (Button) findViewById(R.id.datePickerButton);
+	          String text = "" + mDay + "/" + (mMonth+1) + "/" + mYear;
+	          b.setText(text);
+    	  }
+    	  else {
+    		  Toast.makeText(PlannerActivity.this, "Your start date must be after the date of your furthest appointment: " + furthest_date.toString(), Toast.LENGTH_LONG).show();
+    	  }
       }
 
   };
@@ -170,7 +205,7 @@ public class PlannerActivity extends Activity {
         
         if (mDoctorId == 0)
         {
-        	Toast.makeText(this, "No doctor associated with this planner", Toast.LENGTH_LONG);
+        	Toast.makeText(this, "No doctor associated with this planner", Toast.LENGTH_LONG).show();
         }
         
         Button b = (Button) findViewById(R.id.datePickerButton);
@@ -178,6 +213,9 @@ public class PlannerActivity extends Activity {
         
         Button confirm = (Button) findViewById(R.id.confirmButton);
         confirm.setOnClickListener(confirmListener);
+        
+        Button cancel = (Button) findViewById(R.id.cancelButton);
+        cancel.setOnClickListener(cancelListener);
         
         addPlannerRow();        
         

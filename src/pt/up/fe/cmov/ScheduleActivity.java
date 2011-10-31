@@ -2,6 +2,8 @@ package pt.up.fe.cmov;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -25,6 +27,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ScheduleActivity extends Activity {
 
@@ -34,7 +37,7 @@ public class ScheduleActivity extends Activity {
     
     public static final String EXTRA_SCHEDULE_TYPE = "scheduleType";
     public static final String EXTRA_SCHEDULE_DOCTOR = "scheduleDoctor";
-	private static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
+	public static final String EXTRA_SCHEDULE_PATIENT = "schedulePatient";
     
     private int doctorId = -1;
     private int patientId = -1;
@@ -144,99 +147,113 @@ public class ScheduleActivity extends Activity {
 		doctorId = getIntent().getIntExtra(EXTRA_SCHEDULE_DOCTOR, 0);
 		patientId = getIntent().getIntExtra(EXTRA_SCHEDULE_PATIENT, 0);
 		
-		patientId = 2;
-		doctorId = 4; //TODO: Dummy
+		ArrayList<SchedulePlan> plans = DoctorOperations.getRemoteCurrentPlans(this, doctorId);
 		
-		SchedulePlan plan = DoctorOperations.getRemoteCurrentPlan(this, doctorId);
-		
-		ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
-		
-		ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER, doctorId);
-		
-		HashMap<Integer, ArrayList<Appointment>> scheduleAppointments = new HashMap<Integer, ArrayList<Appointment>>();
-
-		for (int i=0; i < appointments.size(); i++) {
-			Appointment appointment = appointments.get(i);
-			int scheduleId = appointment.getScheduleId();
-			
-			if (scheduleAppointments.containsKey(scheduleId)) {
-				ArrayList<Appointment> apps = scheduleAppointments.get(scheduleId);
-				apps.add(appointment);
-			}
-			else {
-				ArrayList<Appointment> apps = new ArrayList<Appointment>();
-				apps.add(appointment);
-				scheduleAppointments.put(scheduleId, apps);
-			}
+		if (plans == null) {
+			Toast.makeText(this, "This doctor has no Schedule Plan", Toast.LENGTH_LONG).show();
+			this.finish();
+			return;
 		}
 		
-		for (int i=0; i < schedules.size(); i++) {
-			Schedule schedule = schedules.get(i);
-			Date startDate = schedule.getStartDate();	
-			Date endDate = schedule.getEndDate();
+		Date lastStartDate = null;
+		
+		for (int a=0; a < plans.size(); a++) {
 			
-			ArrayList<Appointment> apps = scheduleAppointments.get(schedule.getId());
+			SchedulePlan plan = plans.get(a);
+		
+			ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
 			
-			if (apps == null) {
-				apps = new ArrayList<Appointment>();
+			ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER, doctorId);
+			
+			HashMap<Integer, ArrayList<Appointment>> scheduleAppointments = new HashMap<Integer, ArrayList<Appointment>>();
+	
+			for (int i=0; i < appointments.size(); i++) {
+				Appointment appointment = appointments.get(i);
+				int scheduleId = appointment.getScheduleId();
+				
+				if (scheduleAppointments.containsKey(scheduleId)) {
+					ArrayList<Appointment> apps = scheduleAppointments.get(scheduleId);
+					apps.add(appointment);
+				}
+				else {
+					ArrayList<Appointment> apps = new ArrayList<Appointment>();
+					apps.add(appointment);
+					scheduleAppointments.put(scheduleId, apps);
+				}
 			}
-
 			
-			long blocks = (endDate.getTime() - startDate.getTime()) / (1000*60*30);
-			
-			Calendar c1 = Calendar.getInstance();
-			c1.setTime(startDate);
-
-			for (int j=0; j < blocks; j++) {
-				Appointment selectedApp = null;
-				for (int k=0; k < apps.size(); k++) {
-					Appointment app = apps.get(k);
-					long appBlock = blocks - ((endDate.getTime() - app.getDate().getTime()) / (1000*60*30));
-					if (appBlock == j) {
-						selectedApp = app;
-						break;
+			for (int i=schedules.size()-1; i >= 0; i--) {
+				Schedule schedule = schedules.get(i);
+				Date startDate = schedule.getStartDate();	
+				Date endDate = schedule.getEndDate();
+				
+				ArrayList<Appointment> apps = scheduleAppointments.get(schedule.getId());
+				
+				if (apps == null) {
+					apps = new ArrayList<Appointment>();
+				}
+	
+				
+				long blocks = (endDate.getTime() - startDate.getTime()) / (1000*60*30);
+				
+				Calendar c1 = Calendar.getInstance();
+				c1.setTime(startDate);
+	
+				for (int j=0; j < blocks; j++) {
+					Appointment selectedApp = null;
+					for (int k=0; k < apps.size(); k++) {
+						Appointment app = apps.get(k);
+						long appBlock = blocks - ((endDate.getTime() - app.getDate().getTime()) / (1000*60*30));
+						if (appBlock == j) {
+							selectedApp = app;
+							break;
+						}
 					}
-				}
-				
-				
-				
-				int id = c1.get(Calendar.HOUR) * 2 + c1.get(Calendar.MINUTE)/30;
-				ScheduleButton button = null;
-				if (selectedApp == null) {
-					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone());
 					
-					if (scheduleType == APPOINT_SCHEDULE)
-						button.setOnClickListener(scheduleButtonListener);
+					if (lastStartDate == null || c1.getTime().getTime() < lastStartDate.getTime())
+					{
+						
+						int id = c1.get(Calendar.HOUR_OF_DAY) * 2 + c1.get(Calendar.MINUTE)/30;
+						ScheduleButton button = null;
+						if (selectedApp == null) {
+							button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone());
+							
+							if (scheduleType == APPOINT_SCHEDULE)
+								button.setOnClickListener(scheduleButtonListener);
+						}
+						else {
+							button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone(), selectedApp);
+							if (scheduleType == VIEW_SCHEDULE)
+								button.setOnClickListener(scheduleButtonListener);
+						}
+						String label = weekdays[c1.get(Calendar.DAY_OF_WEEK) - 1] + " - " + c1.get(Calendar.DAY_OF_MONTH) + "/" + (c1.get(Calendar.MONTH) + 1);
+						
+						if (!panelOrder.contains(label))
+						{
+							panelOrder.add(0, label);
+						}
+						
+						if (days.containsKey(label)) {
+							ScheduleAdapter adapter = days.get(label);
+							adapter.addSchedule(j, button);
+						}
+						else {
+							ScheduleAdapter adapter = new ScheduleAdapter(this);
+							adapter.addSchedule(button);
+							days.put(label, adapter);
+						}
+					}
+					c1.add(Calendar.MINUTE, 30);	
 				}
-				else {
-					button = new ScheduleButton(this, id, schedule.getId(), (Date) c1.getTime().clone(), selectedApp);
-					if (scheduleType == VIEW_SCHEDULE)
-						button.setOnClickListener(scheduleButtonListener);
-				}
-				String label = weekdays[c1.get(Calendar.DAY_OF_WEEK) - 1] + " - " + c1.get(Calendar.DAY_OF_MONTH) + "/" + (c1.get(Calendar.MONTH) + 1);
-				
-				if (!panelOrder.contains(label))
-				{
-					panelOrder.add(label);
-				}
-				
-				if (days.containsKey(label)) {
-					ScheduleAdapter adapter = days.get(label);
-					adapter.addSchedule(button);
-				}
-				else {
-					ScheduleAdapter adapter = new ScheduleAdapter(this);
-					adapter.addSchedule(button);
-					days.put(label, adapter);
-				}
-				
-				c1.add(Calendar.MINUTE, 30);
-				
-			}
-		}	
+			}	
+			
+			lastStartDate = plan.getStartDate();
+		}
 	}
 	
 	private void buildGrid() {
+		if (panelOrder.isEmpty())
+			return;
 		String label = panelOrder.get(selectedPanel);
 		ScheduleAdapter adapter = days.get(label);
 		GridView scheduleTable = (GridView)findViewById(R.id.scheduleTable);

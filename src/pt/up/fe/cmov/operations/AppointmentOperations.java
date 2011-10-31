@@ -118,7 +118,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 	}
 	
 	public static Appointment getAppointment(Context context, int id) {
-				
+		
 		Uri querySchedulePlanUri = ContentUris.withAppendedId(Appointment.CONTENT_URI, id); 
 		Cursor cAppointment = context.getContentResolver().query(querySchedulePlanUri, null, null, null, null); 
 		Appointment app = null;
