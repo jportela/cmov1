@@ -13,6 +13,7 @@ import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ public class PatientActivity extends ListActivity {
 	public static ArrayList<Appointment> appointmentsPatients  = new ArrayList<Appointment>();
 	private ArrayList<Item> items = new ArrayList<Item>();
 	static public Doctor doc;
+	static public Appointment selectedAppointment;
+	private int positionSelected = -1;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -47,7 +50,7 @@ public class PatientActivity extends ListActivity {
 			}
 
 	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
-
+	        
 			items.add(new EntryItem(i,doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
 					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
 		}
@@ -64,14 +67,27 @@ public class PatientActivity extends ListActivity {
             }
         });
 	}
-
+	
+	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		if(!items.get(position-1).isSection()){
 			int pos = ((EntryItem)items.get(position-1)).getPos();
 			PatientActivity.doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(pos).getDoctorId());
+			PatientActivity.selectedAppointment = appointmentsPatients.get(pos);
+			positionSelected = position - 1;
 			Intent k = new Intent(PatientActivity.this, DoctorViewActivity.class);
-			startActivity(k);
+			startActivityForResult(k,0);
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(positionSelected != -1){
+			items.remove(positionSelected);
+		    EntryAdapter adapter = new EntryAdapter(this, items);
+			setListAdapter(adapter);
+			positionSelected = -1;
 		}
 	}
 
