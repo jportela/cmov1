@@ -29,6 +29,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
     public static ArrayList<Appointment> appointments = new ArrayList<Appointment>();
     ArrayList<Item> items = new ArrayList<Item>();
     private final int searchBtnId = Menu.FIRST;
+    private final int statsId = Menu.FIRST + 1;
 
 	private OnClickListener scheduleButtonListener = new OnClickListener() {
 		
@@ -95,6 +96,8 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	  public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
 	    searchMItm.setIcon(R.drawable.logout);
+	    MenuItem statsMenu = menu.add(Menu.NONE,statsId ,statsId,"Statistics");
+	    statsMenu.setIcon(R.drawable.stats);
 	    return super.onCreateOptionsMenu(menu);
 	  }
 	
@@ -105,6 +108,10 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	        	finish();
 	        	Intent k = new Intent(DoctorActivity.this, LoginActivity.class);
 				startActivity(k);
+	        break;
+	        case statsId:
+	        	Intent inte = new Intent(DoctorActivity.this, StatisticsActivity.class);
+				startActivity(inte);
 	        break;
 	    }
 	    return true;
