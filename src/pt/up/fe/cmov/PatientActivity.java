@@ -16,6 +16,8 @@ import pt.up.fe.cmov.rest.JSONOperations;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -28,6 +30,7 @@ public class PatientActivity extends ListActivity {
 	static public Appointment selectedAppointment;
 	static public int positionSelected = -1;
 	private static int tempPosition = -1;
+	private final int searchBtnId = Menu.FIRST;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -97,5 +100,24 @@ public class PatientActivity extends ListActivity {
 			setListAdapter(adapter);
 			positionSelected = -1;
 		}
+	}
+	
+	@Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
+	    searchMItm.setIcon(R.drawable.logout);
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case searchBtnId:
+	        	finish();
+	        	Intent k = new Intent(PatientActivity.this, LoginActivity.class);
+				startActivity(k);
+	        break;
+	    }
+	    return true;
 	}
 }
