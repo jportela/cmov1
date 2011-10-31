@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
 import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
@@ -168,13 +170,28 @@ public class PlannerActivity extends Activity {
 
       public void onDateSet(DatePicker view, int year, 
                             int monthOfYear, int dayOfMonth) {
-          mYear = year;
-          mMonth = monthOfYear;
-          mDay = dayOfMonth;
-          
-          Button b = (Button) findViewById(R.id.datePickerButton);
-          String text = "" + mDay + "/" + (mMonth+1) + "/" + mYear;
-          b.setText(text);
+    	  
+    	  Appointment furthest = DoctorOperations.getFurthestAppointment(PlannerActivity.this, mDoctorId);
+    	  Date furthest_date = null;
+    	  Date this_date = null;
+    	  
+    	  if (furthest != null)
+    	  {
+	    	  furthest_date = furthest.getDate();
+	    	  this_date = new Date(year-1900, monthOfYear, dayOfMonth);
+    	  }
+    	  if (furthest == null || this_date.getTime() > furthest_date.getTime()) {
+	          mYear = year;
+	          mMonth = monthOfYear;
+	          mDay = dayOfMonth;
+	          
+	          Button b = (Button) findViewById(R.id.datePickerButton);
+	          String text = "" + mDay + "/" + (mMonth+1) + "/" + mYear;
+	          b.setText(text);
+    	  }
+    	  else {
+    		  Toast.makeText(PlannerActivity.this, "Your start date must be after the date of your furthest appointment: " + furthest_date.toString(), Toast.LENGTH_LONG).show();
+    	  }
       }
 
   };
