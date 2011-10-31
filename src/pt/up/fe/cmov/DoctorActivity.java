@@ -17,6 +17,8 @@ import pt.up.fe.cmov.rest.JSONOperations;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,6 +28,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 
     public static ArrayList<Appointment> appointments = new ArrayList<Appointment>();
     ArrayList<Item> items = new ArrayList<Item>();
+    private final int searchBtnId = Menu.FIRST;
 
 	private OnClickListener scheduleButtonListener = new OnClickListener() {
 		
@@ -80,12 +83,31 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if(!items.get(position-1).isSection()){
-			int pos = ((EntryItem)items.get(position-1)).getPos();
+		if(!items.get(position).isSection()){
+			int pos = ((EntryItem)items.get(position)).getPos();
 			ListAppointmentActivity.p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(pos).getPatientId());
 			Intent k = new Intent(DoctorActivity.this, PatientViewActivity.class);
 			startActivity(k);
 		}
+	}
+	
+	@Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
+	    searchMItm.setIcon(R.drawable.logout);
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case searchBtnId:
+	        	finish();
+	        	Intent k = new Intent(DoctorActivity.this, LoginActivity.class);
+				startActivity(k);
+	        break;
+	    }
+	    return true;
 	}
 	
 }

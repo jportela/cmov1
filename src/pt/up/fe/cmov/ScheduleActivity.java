@@ -22,6 +22,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -41,6 +43,7 @@ public class ScheduleActivity extends Activity {
     
     private int doctorId = -1;
     private int patientId = -1;
+    private final int searchBtnId = Menu.FIRST;
 
     private HashMap<String, ScheduleAdapter> days;
     private ArrayList<String> panelOrder;
@@ -100,6 +103,25 @@ public class ScheduleActivity extends Activity {
 		}
 
     }; 
+    
+    @Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
+	    searchMItm.setIcon(R.drawable.logout);
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case searchBtnId:
+	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        	finish();
+	        	startActivity(intent);
+	        break;
+	    }
+	    return true;
+	}
     
 	@Override
     public void onCreate(Bundle savedInstanceState) {

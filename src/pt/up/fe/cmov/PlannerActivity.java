@@ -13,10 +13,13 @@ import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -33,6 +36,7 @@ import android.widget.Toast;
 public class PlannerActivity extends Activity {
 	
 	public static final String PLANNER_DOCTOR_ID = "plannerDoctorId";
+	private final int searchBtnId = Menu.FIRST;
 	
 	private OnClickListener newRowListener =    
 		new OnClickListener() {
@@ -217,10 +221,26 @@ public class PlannerActivity extends Activity {
         Button cancel = (Button) findViewById(R.id.cancelButton);
         cancel.setOnClickListener(cancelListener);
         
-        addPlannerRow();        
-        
-
-        
+        addPlannerRow();           
+	}
+	
+	@Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
+	    searchMItm.setIcon(R.drawable.logout);
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case searchBtnId:
+	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        	finish();
+	        	startActivity(intent);
+	        break;
+	    }
+	    return true;
 	}
 	
 	public void addPlannerRow() {
