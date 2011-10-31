@@ -25,13 +25,13 @@ public class PatientContentProvider extends ContentProvider {
 
 	 private static final String DATABASE_NAME = "pclinic.db";
 
-	 private static final int DATABASE_VERSION = 4;
+	 private static final int DATABASE_VERSION = 1;
 
 	 private static final String PATIENTS_TABLE_NAME = "patients";
 
 	 public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.patientcontentprovider";
 
-	private static final UriMatcher sUriMatcher;
+	 private static final UriMatcher sUriMatcher;
 
 	 private static final int PATIENTS = 1;
 	    
@@ -47,10 +47,7 @@ public class PatientContentProvider extends ContentProvider {
 
 	        @Override
 	        public void onCreate(SQLiteDatabase db) {
-	            db.execSQL("CREATE TABLE " + PATIENTS_TABLE_NAME + " (" + Person.PERSON_ID
-	                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Person.PERSON_BIRTHDATE + " DATETIME," 
-	                    + Person.PERSON_NAME + " VARCHAR(255)," + Person.PERSON_USERNAME +" VARCHAR(255), " 
-	                    + Patient.PATIENT_ADDRESS + " VARCHAR(255)," + Patient.PATIENT_SEX  + " VARCHAR(255));");
+	        	GlobalSchema.createSchema(db);
 	        }
 
 	        @Override
@@ -181,6 +178,7 @@ public class PatientContentProvider extends ContentProvider {
 	        patientsProjectionMap.put(Person.PERSON_BIRTHDATE, Person.PERSON_BIRTHDATE);
 	        patientsProjectionMap.put(Patient.PATIENT_ADDRESS, Patient.PATIENT_ADDRESS);
 	        patientsProjectionMap.put(Patient.PATIENT_SEX, Patient.PATIENT_SEX);
+	        patientsProjectionMap.put("password_md5", "password_md5");
 	    }
 
 

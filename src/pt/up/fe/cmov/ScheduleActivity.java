@@ -82,6 +82,7 @@ public class ScheduleActivity extends Activity {
 			if (scheduleType == APPOINT_SCHEDULE)
 				showDialog(DIALOG_CONFIRM_APPOINTMENT);
 			else if (scheduleType == VIEW_SCHEDULE) {
+				//Intent patientIntent = new Intent(ScheduleActivity.this, PatientViewActivity.class);
 				Log.i("SCHEDULE", "Show appointment info: " + selectedSchedule.getAppointment().getDate().toString());
 			}
 		}

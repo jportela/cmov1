@@ -66,7 +66,7 @@ public class PatientRegisterActivity extends Activity implements OnClickListener
                 	&& birthday.length() > 0 && address.length() > 0){
 	                try {
 						PatientOperations.createPatient(PatientRegisterActivity.this, new Patient(-1, name, JSONOperations.dbDateFormaterP.parse(birthday), 
-								username,address,sex,password));
+								username,address,sex,password), true);
 						Toast.makeText(PatientRegisterActivity.this, "Registration Completed. You may login now!", Toast.LENGTH_LONG).show();
 						PatientRegisterActivity.this.finish();
 					} catch (ParseException e) {

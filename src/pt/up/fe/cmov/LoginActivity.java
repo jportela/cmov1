@@ -1,15 +1,16 @@
 package pt.up.fe.cmov;
 
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
-import org.json.JSONException;
+import org.json.JSONObject;
 
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
+import pt.up.fe.cmov.rest.JSONOperations;
+import pt.up.fe.cmov.rest.RailsRestClient;
 import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -70,50 +71,98 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	
 	@Override
 	public void run() {
-		while(Thread.currentThread() == thread){
-			try{
-				docs = DoctorOperations.queryDoctorsRemoteServer(this);
-				pats = PatientOperations.queryPatientsRemoteServer();
+		//while(Thread.currentThread() == thread){
+			
+			/*docs = DoctorOperations.queryDoctorsRemoteServer(this);
+			pats = PatientOperations.queryPatientsRemoteServer();
+			
+			for(Doctor doc:docs){
+	            if(username.equals(doc.getUsername()) && password.equals(doc.getPassword())){
+	                try
+	                {
+	                	login = true;
+	        			RemoteSync.oneClickSync(this, null);
+	        			LoginActivity.loginDoctor = doc;
+	                    handler.sendEmptyMessage(0);
+	                }catch(Exception e){
+	                	e.getStackTrace();
+	                }
+	            }
+	        }
+			
+			for(Patient pat:pats){
+	            if(username.equals(pat.getUsername()) && password.equals(pat.getPassword())){
+	                try
+	                {
+	                	login = true;
+	        			RemoteSync.oneClickSync(this, null);
+	        			LoginActivity.loginPatient = pat;
+	                    handler.sendEmptyMessage(0);
+	                }catch(Exception e){
+	                	e.getStackTrace();
+	                }
+	            }
+	        }*/
+			try {
+				JSONObject obj = RailsRestClient.Get("system/auth", "user="+username+"&pass="+password);
 				
-				for(Doctor doc:docs){
-		            if(username.equals(doc.getUsername()) && password.equals(doc.getPassword())){
-		                try
-		                {
-		                	login = true;
-		        			RemoteSync.oneClickSync(this, null);
-		        			LoginActivity.loginDoctor = doc;
-		                    handler.sendEmptyMessage(0);
-		                }catch(Exception e){
-		                	e.getStackTrace();
-		                }
-		            }
-		        }
-				
-				for(Patient pat:pats){
-		            if(username.equals(pat.getUsername()) && password.equals(pat.getPassword())){
-		                try
-		                {
-		                	login = true;
-		        			RemoteSync.oneClickSync(this, null);
-		        			LoginActivity.loginPatient = pat;
-		                    handler.sendEmptyMessage(0);
-		                }catch(Exception e){
-		                	e.getStackTrace();
-		                }
-		            }
-		        }
-				
-				if(!login){
-					handler.sendEmptyMessage(1);
+				if (obj == null)
+				{
+					ArrayList<Doctor> doctors = DoctorOperations.queryDoctors(this, "username = ?", new String[] {username}, null);	
+					
+					if (doctors.isEmpty()) {
+					ArrayList<Patient> patients = PatientOperations.queryPatients(this, "username = ?", new String[] {username}, null);	
+						if (patients.isEmpty()) {
+							login = false;
+							handler.sendEmptyMessage(1);
+						}
+						else if (patients.get(0).getPassword().equals(password)){
+							LoginActivity.loginPatient = patients.get(0);
+							login = true;
+							handler.sendEmptyMessage(0);
+						}
+						else {
+							login = false;
+							handler.sendEmptyMessage(1);
+						}
+					}
+					else if (doctors.get(0).getPassword().equals(password)) {
+						LoginActivity.loginDoctor = doctors.get(0);
+						login = true;
+						handler.sendEmptyMessage(0);
+					}
+					else {
+						login = false;
+						handler.sendEmptyMessage(1);
+					}
 				}
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}	
-		}
+				else {
+					String logged = obj.getString("logged");
+					
+					if ("false".equals(logged)) {
+						login = false;
+						handler.sendEmptyMessage(1);
+					}
+					else if ("true".equals(logged)){
+						login = true;
+						String type = obj.getString("type");
+						if ("doctor".equals(type)) {
+							LoginActivity.loginDoctor = JSONOperations.JSONToDoctor(this, obj.getJSONObject("object"));
+						}
+						else if ("patient".equals(type)) {
+							LoginActivity.loginPatient = JSONOperations.JSONToPatient(obj.getJSONObject("object"));
+							PatientOperations.createOrUpdatePatient(this, LoginActivity.loginPatient);
+						}
+	                    handler.sendEmptyMessage(0);
+					}
+	    			RemoteSync.oneClickSync(this, null);
+				}
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			}
+		//}
+		
 	}
 
 	private Handler handler = new Handler() {

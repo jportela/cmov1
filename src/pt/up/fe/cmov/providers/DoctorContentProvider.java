@@ -26,9 +26,7 @@ public class DoctorContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 3;
-
-    private static final String DOCTORS_TABLE_NAME = "doctors";
+    private static final int DATABASE_VERSION = 1;
 
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.doctorcontentprovider";
 
@@ -48,17 +46,14 @@ public class DoctorContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + DOCTORS_TABLE_NAME + " (" + Person.PERSON_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Person.PERSON_BIRTHDATE + " DATETIME," 
-                    + Person.PERSON_NAME + " VARCHAR(255)," + Person.PERSON_USERNAME +" VARCHAR(255), " 
-                    + Doctor.DOCTOR_PHOTO + " VARCHAR(255)," + Doctor.DOCTOR_SPECIALITY + " INTEGER);");
+        	GlobalSchema.createSchema(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + DOCTORS_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + GlobalSchema.DOCTORS_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -71,11 +66,11 @@ public class DoctorContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case DOCTORS:
-                count = db.delete(DOCTORS_TABLE_NAME, where, whereArgs);
+                count = db.delete(GlobalSchema.DOCTORS_TABLE_NAME, where, whereArgs);
                 break;
             case DOCTOR_ID:
             	String id = uri.getLastPathSegment();
-                count = db.delete(DOCTORS_TABLE_NAME,  Person.PERSON_ID + "= ?", new String[]{id});
+                count = db.delete(GlobalSchema.DOCTORS_TABLE_NAME,  Person.PERSON_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -108,7 +103,7 @@ public class DoctorContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(DOCTORS_TABLE_NAME, null, values);
+        long rowId = db.insert(GlobalSchema.DOCTORS_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(Doctor.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -126,8 +121,8 @@ public class DoctorContentProvider extends ContentProvider {
     
     public static Cursor queryDoctorInnerJoinSpeciality(){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_SNAME + ",d._id,s._id AS speciality_id" + 
-    			" FROM " + DOCTORS_TABLE_NAME + " d INNER JOIN  " + SpecialityContentProvider.SPECIALITIES_TABLE_NAME +
+    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_SNAME + ",d._id,s._id" + 
+    			" FROM " + GlobalSchema.DOCTORS_TABLE_NAME + " d INNER JOIN  " + GlobalSchema.SPECIALITIES_TABLE_NAME +
     			" s ON d.speciality_id=s._id ORDER BY s." + Speciality.SPECIALITY_SNAME;
     	return db.rawQuery(MY_QUERY, new String[]{});
     }
@@ -135,8 +130,8 @@ public class DoctorContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        qb.setTables(DOCTORS_TABLE_NAME);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        qb.setTables(GlobalSchema.DOCTORS_TABLE_NAME);
         qb.setProjectionMap(doctorsProjectionMap);
         Cursor c = null;
 
@@ -164,11 +159,11 @@ public class DoctorContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case DOCTORS:
-                count = db.update(DOCTORS_TABLE_NAME, values, where, whereArgs);
+                count = db.update(GlobalSchema.DOCTORS_TABLE_NAME, values, where, whereArgs);
                 break;
             case DOCTOR_ID:
             	String id = uri.getLastPathSegment();
-                count = db.update(DOCTORS_TABLE_NAME, values,  Person.PERSON_ID + "= ?", new String[]{id});
+                count = db.update(GlobalSchema.DOCTORS_TABLE_NAME, values,  Person.PERSON_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -180,8 +175,8 @@ public class DoctorContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, DOCTORS_TABLE_NAME, DOCTORS);
-        sUriMatcher.addURI(AUTHORITY, DOCTORS_TABLE_NAME + "/#", DOCTOR_ID);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.DOCTORS_TABLE_NAME, DOCTORS);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.DOCTORS_TABLE_NAME + "/#", DOCTOR_ID);
 
         doctorsProjectionMap = new HashMap<String, String>();
         doctorsProjectionMap.put(Person.PERSON_ID, Person.PERSON_ID);
@@ -190,5 +185,6 @@ public class DoctorContentProvider extends ContentProvider {
         doctorsProjectionMap.put(Person.PERSON_BIRTHDATE, Person.PERSON_BIRTHDATE);
         doctorsProjectionMap.put(Doctor.DOCTOR_PHOTO, Doctor.DOCTOR_PHOTO);
         doctorsProjectionMap.put(Doctor.DOCTOR_SPECIALITY, Doctor.DOCTOR_SPECIALITY);
+        doctorsProjectionMap.put("password_md5", "password_md5");
     }
 }

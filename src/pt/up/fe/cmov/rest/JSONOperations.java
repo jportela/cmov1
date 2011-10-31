@@ -33,7 +33,7 @@ public class JSONOperations {
 		JSONObject json = new JSONObject();
 		json.put("birthdate", birthday);
 		json.put("name", doctor.getName());
-		json.put("password_md5", "LOL");
+		json.put("password_md5", doctor.getPassword());
 		json.put("username", doctor.getUsername());
 		json.put("photo", doctor.getPhoto());
 		json.put("speciality_id", doctor.getSpeciality().getId());

@@ -23,9 +23,7 @@ public class ScheduleContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 5;
-
-    private static final String SCHEDULE_TABLE_NAME = "schedules";
+    private static final int DATABASE_VERSION = 1;
 
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.schedulecontentprovider";
 
@@ -45,16 +43,14 @@ public class ScheduleContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + SCHEDULE_TABLE_NAME + " (" + Schedule.SCHEDULE_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Schedule.SCHEDULE_START_DATE + " DATETIME," + Schedule.SCHEDULE_END_DATE + " DATETIME,"
-                    + Schedule.SCHEDULE_PLAN_ID + " INTEGER);"); 
+        	GlobalSchema.createSchema(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + SCHEDULE_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + GlobalSchema.SCHEDULE_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -67,11 +63,11 @@ public class ScheduleContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case SCHEDULE:
-                count = db.delete(SCHEDULE_TABLE_NAME, where, whereArgs);
+                count = db.delete(GlobalSchema.SCHEDULE_TABLE_NAME, where, whereArgs);
                 break;
             case SCHEDULE_ID:
             	String id = uri.getLastPathSegment();
-                count = db.delete(SCHEDULE_TABLE_NAME,  Schedule.SCHEDULE_ID + "= ?", new String[]{id});
+                count = db.delete(GlobalSchema.SCHEDULE_TABLE_NAME,  Schedule.SCHEDULE_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -104,7 +100,7 @@ public class ScheduleContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(SCHEDULE_TABLE_NAME, null, values);
+        long rowId = db.insert(GlobalSchema.SCHEDULE_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(Schedule.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -124,7 +120,7 @@ public class ScheduleContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        qb.setTables(SCHEDULE_TABLE_NAME);
+        qb.setTables(GlobalSchema.SCHEDULE_TABLE_NAME);
         qb.setProjectionMap(scheduleProjectionMap);
         Cursor c = null;
 
@@ -152,11 +148,11 @@ public class ScheduleContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case SCHEDULE:
-                count = db.update(SCHEDULE_TABLE_NAME, values, where, whereArgs);
+                count = db.update(GlobalSchema.SCHEDULE_TABLE_NAME, values, where, whereArgs);
                 break;
             case SCHEDULE_ID:
             	String id = uri.getLastPathSegment();
-                count = db.update(SCHEDULE_TABLE_NAME, values,  Schedule.SCHEDULE_ID + "= ?", new String[]{id});
+                count = db.update(GlobalSchema.SCHEDULE_TABLE_NAME, values,  Schedule.SCHEDULE_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -168,8 +164,8 @@ public class ScheduleContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, SCHEDULE_TABLE_NAME, SCHEDULE); 
-        sUriMatcher.addURI(AUTHORITY, SCHEDULE_TABLE_NAME + "/#", SCHEDULE_ID);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.SCHEDULE_TABLE_NAME, SCHEDULE); 
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.SCHEDULE_TABLE_NAME + "/#", SCHEDULE_ID);
 
         scheduleProjectionMap = new HashMap<String, String>();
         scheduleProjectionMap.put(Schedule.SCHEDULE_ID, Schedule.SCHEDULE_ID);

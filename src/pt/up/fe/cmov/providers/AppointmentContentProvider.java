@@ -23,9 +23,7 @@ public class AppointmentContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 2;
-
-    private static final String APPOINTMENT_TABLE_NAME = "appointments";
+    private static final int DATABASE_VERSION = 1;
 
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.appointmentcontentprovider";
 
@@ -45,17 +43,14 @@ public class AppointmentContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + APPOINTMENT_TABLE_NAME + " (" + Appointment.APPOINTMENT_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Appointment.APPOINTMENT_PATIENT_ID + " INTEGER," 
-                    + Appointment.APPOINTMENT_DOCTOR_ID + " INTEGER," 
-                    + Appointment.APPOINTMENT_SCHEDULE_ID + " INTEGER," + Appointment.APPOINTMENT_DATE + " DATETIME);");
+        	GlobalSchema.createSchema(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + APPOINTMENT_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + GlobalSchema.APPOINTMENT_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -68,11 +63,11 @@ public class AppointmentContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case APPOINTMENT:
-                count = db.delete(APPOINTMENT_TABLE_NAME, where, whereArgs);
+                count = db.delete(GlobalSchema.APPOINTMENT_TABLE_NAME, where, whereArgs);
                 break;
             case APPOINTMENT_ID:
             	String id = uri.getLastPathSegment();
-                count = db.delete(APPOINTMENT_TABLE_NAME,  Appointment.APPOINTMENT_ID + "= ?", new String[]{id});
+                count = db.delete(GlobalSchema.APPOINTMENT_TABLE_NAME,  Appointment.APPOINTMENT_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -105,7 +100,7 @@ public class AppointmentContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(APPOINTMENT_TABLE_NAME, null, values);
+        long rowId = db.insert(GlobalSchema.APPOINTMENT_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(Appointment.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -125,7 +120,7 @@ public class AppointmentContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        qb.setTables(APPOINTMENT_TABLE_NAME);
+        qb.setTables(GlobalSchema.APPOINTMENT_TABLE_NAME);
         qb.setProjectionMap(appointmentsPlanProjectionMap);
         Cursor c = null;
 
@@ -153,11 +148,11 @@ public class AppointmentContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case APPOINTMENT:
-                count = db.update(APPOINTMENT_TABLE_NAME, values, where, whereArgs);
+                count = db.update(GlobalSchema.APPOINTMENT_TABLE_NAME, values, where, whereArgs);
                 break;
             case APPOINTMENT_ID:
             	String id = uri.getLastPathSegment();
-                count = db.update(APPOINTMENT_TABLE_NAME, values,  Appointment.APPOINTMENT_ID + "= ?", new String[]{id});
+                count = db.update(GlobalSchema.APPOINTMENT_TABLE_NAME, values,  Appointment.APPOINTMENT_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -169,8 +164,8 @@ public class AppointmentContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, APPOINTMENT_TABLE_NAME, APPOINTMENT);
-        sUriMatcher.addURI(AUTHORITY, APPOINTMENT_TABLE_NAME + "/#", APPOINTMENT_ID);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.APPOINTMENT_TABLE_NAME, APPOINTMENT);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.APPOINTMENT_TABLE_NAME + "/#", APPOINTMENT_ID);
 
         appointmentsPlanProjectionMap = new HashMap<String, String>();
         appointmentsPlanProjectionMap.put(Appointment.APPOINTMENT_ID, Appointment.APPOINTMENT_ID);

@@ -24,8 +24,6 @@ public class SystemContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 1;
 
-    private static final String SYSTEM_TABLE_NAME = "system";
-
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.systemcontentprovider";
 
     private static final UriMatcher sUriMatcher;
@@ -50,16 +48,14 @@ public class SystemContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + SYSTEM_TABLE_NAME + " ( " + SYSTEM_ID +
-            		" INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-            		SYSTEM_LAST_SYNC + " VARCHAR(255));");
+            GlobalSchema.createSchema(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + SYSTEM_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + GlobalSchema.SYSTEM_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -71,7 +67,7 @@ public class SystemContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count;
 
-        count = db.delete(SYSTEM_TABLE_NAME, where, whereArgs);
+        count = db.delete(GlobalSchema.SYSTEM_TABLE_NAME, where, whereArgs);
 
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
@@ -100,7 +96,7 @@ public class SystemContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(SYSTEM_TABLE_NAME, null, values);
+        long rowId = db.insert(GlobalSchema.SYSTEM_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -120,7 +116,7 @@ public class SystemContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        qb.setTables(SYSTEM_TABLE_NAME);
+        qb.setTables(GlobalSchema.SYSTEM_TABLE_NAME);
         qb.setProjectionMap(systemProjectionMap);
         Cursor c = null;
 
@@ -136,7 +132,7 @@ public class SystemContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case SYSTEM:
-                count = db.update(SYSTEM_TABLE_NAME, values, where, whereArgs);
+                count = db.update(GlobalSchema.SYSTEM_TABLE_NAME, values, where, whereArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -148,7 +144,7 @@ public class SystemContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, SYSTEM_TABLE_NAME, SYSTEM);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.SYSTEM_TABLE_NAME, SYSTEM);
 
         systemProjectionMap = new HashMap<String, String>();
         systemProjectionMap.put(SYSTEM_ID, SYSTEM_ID);

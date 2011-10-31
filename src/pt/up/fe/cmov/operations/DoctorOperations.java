@@ -48,6 +48,7 @@ public class DoctorOperations {
 		values.put(Person.PERSON_NAME,doctor.getName());
 		values.put(Person.PERSON_USERNAME, doctor.getUsername());
 		values.put(Doctor.DOCTOR_PHOTO, doctor.getPhoto());
+		values.put("password_md5", doctor.getPassword());
 		values.put(Doctor.DOCTOR_SPECIALITY, doctor.getSpeciality().getId());
 		values.put(Person.PERSON_BIRTHDATE, JSONOperations.dbDateFormater.format(doctor.getBirthDate().getTime()));
 		Uri uri = context.getContentResolver().insert(Doctor.CONTENT_URI, values);		
@@ -74,8 +75,9 @@ public class DoctorOperations {
 
 		values.put(Person.PERSON_USERNAME, doctor.getUsername());
 		values.put(Doctor.DOCTOR_PHOTO, doctor.getPhoto());
+		values.put("password_md5", doctor.getPassword());
 		values.put(Doctor.DOCTOR_SPECIALITY, doctor.getSpeciality().getId());
-		//values.put(Person.PERSON_BIRTHDATE, doctor.getBirthDate().toString());
+		values.put(Person.PERSON_BIRTHDATE, JSONOperations.dbDateFormater.format(doctor.getBirthDate().getTime()));
 		Uri updateDoctorUri = ContentUris.withAppendedId(Doctor.CONTENT_URI, doctor.getId());
 		context.getContentResolver().update(updateDoctorUri, values, null, null);
 		
@@ -120,12 +122,18 @@ public class DoctorOperations {
 		Cursor cDoctor = context.getContentResolver().query(queryDoctorUri, null, null, null, null); 
 		Doctor d = null;
 		while (cDoctor.moveToNext()) { 
-			   //Date birthdate = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_BIRTHDATE));
+			   Date birthdate = null;
+			   try {
+				   birthdate = JSONOperations.dbDateFormater.parse(cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_BIRTHDATE)));
+			   }
+			   catch (ParseException e) {
+				   
+			   }
 			   String name = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_NAME));
 			   String username = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_USERNAME)); 
 			   String photo = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_PHOTO)); 
 			   String specialityId = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
-			   d = new Doctor(id,name,null,username,photo,
+			   d = new Doctor(id,name,birthdate,username,photo,
 					   Speciality.Records.get(Integer.parseInt(specialityId)));
 			} 
 		cDoctor.close();
@@ -151,9 +159,18 @@ public class DoctorOperations {
                  String name = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_NAME));
                  String username = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_USERNAME)); 
                  String photo = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_PHOTO)); 
-                 String specialityId = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
-                 queryDoctors.add(new Doctor(Integer.parseInt(id),name,new Date(birthdate),username,photo,
-                                        Speciality.Records.get(Integer.parseInt(specialityId)),password));
+                 int specialityId = cDoctor.getInt(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
+                 
+                 Date date = null;
+  			     try {
+  				     date = JSONOperations.dbDateFormater.parse(birthdate);
+  			     }
+  			     catch (ParseException e) {
+  			    	 e.printStackTrace();
+  			     }
+                 
+                 queryDoctors.add(new Doctor(Integer.parseInt(id),name,date,username,photo,
+                                        SpecialityOperations.getSpeciality(context, specialityId),password));
          } 
         cDoctor.close();
         return queryDoctors;

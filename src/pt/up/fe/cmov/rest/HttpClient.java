@@ -19,6 +19,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +33,12 @@ public class HttpClient {
 
 	public static JSONObject SendHttpGet(String url) {
 
-		DefaultHttpClient client = new DefaultHttpClient();
+		HttpParams httpParams = new BasicHttpParams();
+		//HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+		//HttpConnectionParams.setSoTimeout(httpParams, 3000);
+
+		DefaultHttpClient client = new DefaultHttpClient(httpParams);
+		
 		HttpGet request = new HttpGet(url);
 		initRequest(request);
 		String res = executeRequest(client, request);
@@ -39,7 +47,12 @@ public class HttpClient {
 	
 	public static JSONArray SendHttpGetArray(String url) {
 
-		DefaultHttpClient client = new DefaultHttpClient();
+		HttpParams httpParams = new BasicHttpParams();
+		//HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+		//HttpConnectionParams.setSoTimeout(httpParams, 3000);
+
+		DefaultHttpClient client = new DefaultHttpClient(httpParams);
+
 		HttpGet request = new HttpGet(url);
 		initRequest(request);
 		String res = executeRequest(client, request);
@@ -125,7 +138,7 @@ public class HttpClient {
 	private static JSONObject stringToJSONObject(String str) {
 		
 		if (str == null)
-			return new JSONObject();
+			return null;
 		
 		try {
 			JSONObject obj = new JSONObject(str);

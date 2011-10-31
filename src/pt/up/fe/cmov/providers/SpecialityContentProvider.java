@@ -23,9 +23,7 @@ public class SpecialityContentProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "pclinic.db";
 
-    private static final int DATABASE_VERSION = 7;
-
-    public static final String SPECIALITIES_TABLE_NAME = "specialities";
+    private static final int DATABASE_VERSION = 1;
 
     public static final String AUTHORITY = "pt.up.fe.cmov.common.providers.specialitycontentprovider";
 
@@ -45,15 +43,14 @@ public class SpecialityContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + SPECIALITIES_TABLE_NAME + " (" + Speciality.SPECIALITY_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Speciality.SPECIALITY_SNAME + " VARCHAR(255));");
+        	GlobalSchema.createSchema(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
                     + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + SPECIALITIES_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + GlobalSchema.SPECIALITIES_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -66,11 +63,11 @@ public class SpecialityContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case SPECIALITIES:
-                count = db.delete(SPECIALITIES_TABLE_NAME, where, whereArgs);
+                count = db.delete(GlobalSchema.SPECIALITIES_TABLE_NAME, where, whereArgs);
                 break;
             case SPECIALITY_ID:
             	String id = uri.getLastPathSegment();
-                count = db.delete(SPECIALITIES_TABLE_NAME,  Speciality.SPECIALITY_ID + "= ?", new String[]{id});
+                count = db.delete(GlobalSchema.SPECIALITIES_TABLE_NAME,  Speciality.SPECIALITY_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -103,7 +100,7 @@ public class SpecialityContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(SPECIALITIES_TABLE_NAME, null, values);
+        long rowId = db.insert(GlobalSchema.SPECIALITIES_TABLE_NAME, null, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(Speciality.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -123,7 +120,7 @@ public class SpecialityContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        qb.setTables(SPECIALITIES_TABLE_NAME);
+        qb.setTables(GlobalSchema.SPECIALITIES_TABLE_NAME);
         qb.setProjectionMap(specialitiesProjectionMap);
         Cursor c = null;
         
@@ -151,11 +148,11 @@ public class SpecialityContentProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
             case SPECIALITIES:
-                count = db.update(SPECIALITIES_TABLE_NAME, values, where, whereArgs);
+                count = db.update(GlobalSchema.SPECIALITIES_TABLE_NAME, values, where, whereArgs);
                 break;
             case SPECIALITY_ID:
             	String id = uri.getLastPathSegment();
-                count = db.update(SPECIALITIES_TABLE_NAME, values,  Speciality.SPECIALITY_ID + "= ?", new String[]{id});
+                count = db.update(GlobalSchema.SPECIALITIES_TABLE_NAME, values,  Speciality.SPECIALITY_ID + "= ?", new String[]{id});
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -167,8 +164,8 @@ public class SpecialityContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, SPECIALITIES_TABLE_NAME, SPECIALITIES);
-        sUriMatcher.addURI(AUTHORITY, SPECIALITIES_TABLE_NAME + "/#", SPECIALITY_ID);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.SPECIALITIES_TABLE_NAME, SPECIALITIES);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.SPECIALITIES_TABLE_NAME + "/#", SPECIALITY_ID);
 
         specialitiesProjectionMap = new HashMap<String, String>();
         specialitiesProjectionMap.put(Speciality.SPECIALITY_ID, Speciality.SPECIALITY_ID);
