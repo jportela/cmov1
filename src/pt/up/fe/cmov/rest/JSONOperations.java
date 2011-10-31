@@ -23,7 +23,7 @@ public class JSONOperations {
 	public static final DateFormat dbDateFormaterP = new SimpleDateFormat("yyyy-MM-dd");
 	public static final SimpleDateFormat formatter = new SimpleDateFormat("kk:mm");  
 	public static final DateFormat dbDateTimeZoneFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
-	public static final SimpleDateFormat weekDay = new SimpleDateFormat("EEEE, dd MMM");
+	public static final SimpleDateFormat weekDay = new SimpleDateFormat("EEEE, dd MMM yyyy");
 	public static final SimpleDateFormat completeDate = new SimpleDateFormat("EEEE, dd MMM yyyy kk:mm");
 
 	public static JSONObject doctorToJSON(Doctor doctor) throws JSONException{

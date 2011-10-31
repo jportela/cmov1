@@ -53,6 +53,7 @@ public class DoctorViewActivity extends ListActivity {
 
 		            @Override
 		            public void onClick(DialogInterface dialog, int which) {
+		            	PatientActivity.isToDelete();
 		            	AppointmentOperations.deleteAppointment(DoctorViewActivity.this, PatientActivity.selectedAppointment);
 		                DoctorViewActivity.this.finish();
 		                

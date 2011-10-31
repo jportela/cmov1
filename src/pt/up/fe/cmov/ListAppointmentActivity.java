@@ -34,7 +34,7 @@ public class ListAppointmentActivity extends ListActivity {
 	        Patient pat = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(i).getPatientId());
 
 			
-			items.add(new EntryItem(i,pat.getName(), JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime())));			
+			items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),pat.getName()));			
 		}
 		
 		EntryAdapter adapter = new EntryAdapter(this, items);
