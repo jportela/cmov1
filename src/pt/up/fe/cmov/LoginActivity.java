@@ -136,6 +136,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	        				thread = null;
 	        				runner.interrupt();
 	        			}
+	        			finish();
 	        			startActivity(k);
         			}else if(loginPatient != null){
         				Intent k = new Intent(LoginActivity.this, PatientActivity.class);
@@ -144,6 +145,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	        				thread = null;
 	        				runner.interrupt();
 	        			}
+	        			finish();
 	        			startActivity(k);
         			}
         		}
