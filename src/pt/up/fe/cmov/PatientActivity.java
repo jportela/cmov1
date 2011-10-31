@@ -113,9 +113,9 @@ public class PatientActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
+	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        	finish();
-	        	Intent k = new Intent(PatientActivity.this, LoginActivity.class);
-				startActivity(k);
+	        	startActivity(intent);
 	        break;
 	    }
 	    return true;

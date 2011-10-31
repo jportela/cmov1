@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
     ExpandableListAdapter mAdapter;
 	ArrayList<Doctor> docs; 
 	static public Doctor selectedDoctor;
+	private final int searchBtnId = Menu.FIRST;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,12 +68,25 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
         return false;
     }
 
-    /**
-     * A simple adapter which maintains an ArrayList of photo resource Ids. 
-     * Each photo is displayed as an image. This adapter supports clearing the
-     * list of photos and adding a new photo.
-     *
-     */
+    @Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
+	    searchMItm.setIcon(R.drawable.logout);
+	    return super.onCreateOptionsMenu(menu);
+	  }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case searchBtnId:
+	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        	finish();
+	        	startActivity(intent);
+	        break;
+	    }
+	    return true;
+	}
+    
     public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     
         private ArrayList<String> groups = getGroups();
