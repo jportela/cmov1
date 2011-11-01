@@ -23,6 +23,7 @@ public class ListAppointmentActivity extends ListActivity {
 	static public Patient p = new Patient();
 	ArrayList<Item> items = new ArrayList<Item>();
 	private final int searchBtnId = Menu.FIRST;
+    private final int statsId = Menu.FIRST + 1;
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -58,6 +59,8 @@ public class ListAppointmentActivity extends ListActivity {
 	  public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
 	    searchMItm.setIcon(R.drawable.logout);
+	    MenuItem statsMenu = menu.add(Menu.NONE,statsId ,statsId,"Statistics");
+	    statsMenu.setIcon(R.drawable.stats);
 	    return super.onCreateOptionsMenu(menu);
 	  }
 	
@@ -65,9 +68,13 @@ public class ListAppointmentActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
-	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        	finish();
-	        	startActivity(intent);
+	        	Intent k = new Intent(ListAppointmentActivity.this, LoginActivity.class);
+				startActivity(k);
+	        break;
+	        case statsId:
+	        	Intent inte = new Intent(ListAppointmentActivity.this, StatisticsActivity.class);
+				startActivity(inte);
 	        break;
 	    }
 	    return true;
