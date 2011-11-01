@@ -54,26 +54,27 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
         
         appointments = AppointmentOperations.getRemoteServerAllAppointment(this, DoctorOperations.DOCTOR_CONTROLER,LoginActivity.loginDoctor.getId());
 		
-        if (appointments.isEmpty())
+        if (appointments == null)
         {
         	TextView title = (TextView) findViewById(R.id.nextAppsTitle);
         	title.setTextSize(12.0f);
         	title.setText("No appointments... \nCheck your connection with the server");
         }
-        
-        int size = 0;
-		if(appointments.size() < 4) size = appointments.size(); else size = 3;
-		for(int i = 0; i < size;i++){
-
-			if(!weekDay.equals(JSONOperations.weekDay.format(appointments.get(i).getDate().getTime()))){
-				weekDay = JSONOperations.weekDay.format(appointments.get(i).getDate().getTime());
-				items.add(new SectionItem(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime())));
+        else {
+	        
+	        int size = 0;
+			if(appointments.size() < 4) size = appointments.size(); else size = 3;
+			for(int i = 0; i < size;i++){
+	
+				if(!weekDay.equals(JSONOperations.weekDay.format(appointments.get(i).getDate().getTime()))){
+					weekDay = JSONOperations.weekDay.format(appointments.get(i).getDate().getTime());
+					items.add(new SectionItem(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime())));
+				}
+	
+		        Patient p = PatientOperations.getRemoteServerPatient(this, appointments.get(i).getPatientId());
+				items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),p.getName()));			
 			}
-
-	        Patient p = PatientOperations.getRemoteServerPatient(this, appointments.get(i).getPatientId());
-			items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),p.getName()));			
-		}
-		
+        }		
         
         EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);
