@@ -1,8 +1,11 @@
 package pt.up.fe.cmov;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
+import org.apache.http.conn.ConnectTimeoutException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.up.fe.cmov.entities.Doctor;
@@ -26,9 +29,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class LoginActivity extends Activity implements Runnable,OnClickListener{
-	
-	private ArrayList<Doctor> docs = new ArrayList<Doctor>();
-	private ArrayList<Patient> pats = new ArrayList<Patient>(); 
 	private String username = new String();
     private String password = new String();
     private ProgressDialog dialog;
@@ -71,70 +71,12 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	
 	@Override
 	public void run() {
-		//while(Thread.currentThread() == thread){
-			
-			/*docs = DoctorOperations.queryDoctorsRemoteServer(this);
-			pats = PatientOperations.queryPatientsRemoteServer();
-			
-			for(Doctor doc:docs){
-	            if(username.equals(doc.getUsername()) && password.equals(doc.getPassword())){
-	                try
-	                {
-	                	login = true;
-	        			RemoteSync.oneClickSync(this, null);
-	        			LoginActivity.loginDoctor = doc;
-	                    handler.sendEmptyMessage(0);
-	                }catch(Exception e){
-	                	e.getStackTrace();
-	                }
-	            }
-	        }
-			
-			for(Patient pat:pats){
-	            if(username.equals(pat.getUsername()) && password.equals(pat.getPassword())){
-	                try
-	                {
-	                	login = true;
-	        			RemoteSync.oneClickSync(this, null);
-	        			LoginActivity.loginPatient = pat;
-	                    handler.sendEmptyMessage(0);
-	                }catch(Exception e){
-	                	e.getStackTrace();
-	                }
-	            }
-	        }*/
 			try {
 				JSONObject obj = RailsRestClient.Get("system/auth", "user="+username+"&pass="+password);
 				
 				if (obj == null)
 				{
-					ArrayList<Doctor> doctors = DoctorOperations.queryDoctors(this, "username = ?", new String[] {username}, null);	
-					
-					if (doctors.isEmpty()) {
-					ArrayList<Patient> patients = PatientOperations.queryPatients(this, "username = ?", new String[] {username}, null);	
-						if (patients.isEmpty()) {
-							login = false;
-							handler.sendEmptyMessage(1);
-						}
-						else if (patients.get(0).getPassword().equals(password)){
-							LoginActivity.loginPatient = patients.get(0);
-							login = true;
-							handler.sendEmptyMessage(0);
-						}
-						else {
-							login = false;
-							handler.sendEmptyMessage(1);
-						}
-					}
-					else if (doctors.get(0).getPassword().equals(password)) {
-						LoginActivity.loginDoctor = doctors.get(0);
-						login = true;
-						handler.sendEmptyMessage(0);
-					}
-					else {
-						login = false;
-						handler.sendEmptyMessage(1);
-					}
+					handleLocalLogin();
 				}
 				else {
 					String logged = obj.getString("logged");
@@ -155,13 +97,19 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 						}
 	                    handler.sendEmptyMessage(0);
 					}
-	    			RemoteSync.oneClickSync(this, null);
+	    			RemoteSync.oneClickSync(this, LoginActivity.loginPatient);
 				}
 			}
-			catch (Exception e) {
-				// TODO: handle exception
+			catch (ConnectTimeoutException e) {
+				handleLocalLogin();
 			}
-		//}
+			catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
 	}
 
@@ -177,7 +125,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
         				runner.interrupt();
         			}
         			Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-        		}else if(login){
+        		}else {
         			if(loginDoctor != null){
 	        			Intent k = new Intent(LoginActivity.this, DoctorActivity.class);
 	        			if(thread != null){
@@ -198,4 +146,34 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
         		}
         }
 	};
+	
+	private void handleLocalLogin() {
+		ArrayList<Doctor> doctors = DoctorOperations.queryDoctors(this, "username = ?", new String[] {username}, null);	
+		
+		if (doctors.isEmpty()) {
+		ArrayList<Patient> patients = PatientOperations.queryPatients(this, "username = ?", new String[] {username}, null);	
+			if (patients.isEmpty()) {
+				login = false;
+				handler.sendEmptyMessage(1);
+			}
+			else if (patients.get(0).getPassword().equals(password)){
+				LoginActivity.loginPatient = patients.get(0);
+				login = true;
+				handler.sendEmptyMessage(0);
+			}
+			else {
+				login = false;
+				handler.sendEmptyMessage(1);
+			}
+		}
+		else if (doctors.get(0).getPassword().equals(password)) {
+			LoginActivity.loginDoctor = doctors.get(0);
+			login = true;
+			handler.sendEmptyMessage(0);
+		}
+		else {
+			login = false;
+			handler.sendEmptyMessage(1);
+		}
+	}
 }

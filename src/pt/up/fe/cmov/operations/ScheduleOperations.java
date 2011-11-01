@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ScheduleOperations {
 	
@@ -34,6 +36,7 @@ public class ScheduleOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -61,6 +64,7 @@ public class ScheduleOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -86,6 +90,7 @@ public class ScheduleOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -102,13 +107,14 @@ public class ScheduleOperations {
 	public static Schedule getRemoteServerSchedule(Context context, int schedulePlanId, int id){
 		String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
 			Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER;
-		JSONObject json = RailsRestClient.Get(controller + "/" + Integer.toString(id));
 		try {
-			 return JSONOperations.JSONToSchedule(json);
+			JSONObject json = RailsRestClient.Get(controller + "/" + Integer.toString(id));
+			return JSONOperations.JSONToSchedule(json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
 		}
 		return null;
 	}
@@ -132,20 +138,21 @@ public class ScheduleOperations {
 	public static ArrayList<Schedule> getRemoteSchedules(Context context, int schedulePlanId) {
 		String controller = SchedulePlanOperations.SCHEDULE_PLAN_CONTROLLER + "/" + 
 			Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER;
-		JSONArray jsonArray = RailsRestClient.GetArray(controller);
-		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
-		
-		for (int i=0; i < jsonArray.length(); i++) {
-			try {
-				JSONObject obj = jsonArray.getJSONObject(i);
-				Schedule schedule = JSONOperations.JSONToSchedule(obj);
-				schedules.add(schedule);
-				Log.i("SCHEDULE", schedule.getStartDate().toString() + "---" + schedule.getEndDate().toString());
-			} catch (JSONException e) {
-				Log.e("SCHEDULE", "Couldn't decode JSON object");
-			} catch (ParseException e) {
-				Log.e("SCHEDULE", "Couldn't decode JSON object");
+		ArrayList<Schedule> schedules = null;
+		try {
+			JSONArray jsonArray = RailsRestClient.GetArray(controller);
+			schedules = new ArrayList<Schedule>();
+			for (int i=0; i < jsonArray.length(); i++) {
+					JSONObject obj = jsonArray.getJSONObject(i);
+					Schedule schedule = JSONOperations.JSONToSchedule(obj);
+					schedules.add(schedule);
+					Log.i("SCHEDULE", schedule.getStartDate().toString() + "---" + schedule.getEndDate().toString());
 			}
+		}  catch (JSONException e) {
+			Log.e("SCHEDULE", "Couldn't decode JSON object");
+		} catch (ParseException e) {
+			Log.e("SCHEDULE", "Couldn't decode JSON object");
+		} catch (ConnectTimeoutException e) {
 		}
 		
 		return schedules;
@@ -160,4 +167,30 @@ public class ScheduleOperations {
 		}
 		return true;
 	}
+	
+	public static ArrayList<Schedule> querySchedules(Context context, String selection, String[] selectedArguments, String order){
+        ArrayList<Schedule> querySchedules = new ArrayList<Schedule>();
+        Cursor cSchedule = context.getContentResolver().query(Schedule.CONTENT_URI, null, selection, selectedArguments, order); 
+        while (cSchedule.moveToNext()) { 
+        	Date startDate = null;
+        	Date endDate = null;
+        	
+        	int id = cSchedule.getInt(cSchedule.getColumnIndex(Schedule.SCHEDULE_PLAN_ID)); 
+		    int schedule_plan_id = cSchedule.getInt(cSchedule.getColumnIndex(Schedule.SCHEDULE_PLAN_ID));
+		    
+		    try {
+		    	startDate = JSONOperations.dbDateFormater.parse(cSchedule.getString(cSchedule.getColumnIndex(Schedule.SCHEDULE_START_DATE)));
+		    	endDate = JSONOperations.dbDateFormater.parse(cSchedule.getString(cSchedule.getColumnIndex(Schedule.SCHEDULE_END_DATE)));
+		    } catch (ParseException e) {
+		    	e.printStackTrace();
+		    }
+		    
+		    Schedule sch = new Schedule(id,startDate,endDate);
+		    sch.setSchedulePlanId(schedule_plan_id);
+    	 	
+		    querySchedules.add(sch);
+         } 
+        cSchedule.close();
+        return querySchedules;
+     }
 }

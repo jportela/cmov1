@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -31,60 +32,65 @@ import android.util.Log;
 public class HttpClient {
 	private static final String TAG = "HttpClient";
 
-	public static JSONObject SendHttpGet(String url) {
+	public static JSONObject SendHttpGet(String url) throws ConnectTimeoutException {
 
 		HttpParams httpParams = new BasicHttpParams();
-		//HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
-		//HttpConnectionParams.setSoTimeout(httpParams, 3000);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+		HttpConnectionParams.setSoTimeout(httpParams, 10000);
 
 		DefaultHttpClient client = new DefaultHttpClient(httpParams);
 		
 		HttpGet request = new HttpGet(url);
 		initRequest(request);
 		String res = executeRequest(client, request);
+		if (res == null) throw new ConnectTimeoutException();
 		return stringToJSONObject(res);
 	}
 	
-	public static JSONArray SendHttpGetArray(String url) {
+	public static JSONArray SendHttpGetArray(String url) throws ConnectTimeoutException  {
 
 		HttpParams httpParams = new BasicHttpParams();
-		//HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
-		//HttpConnectionParams.setSoTimeout(httpParams, 3000);
+		HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+		HttpConnectionParams.setSoTimeout(httpParams, 10000);
 
 		DefaultHttpClient client = new DefaultHttpClient(httpParams);
 
 		HttpGet request = new HttpGet(url);
 		initRequest(request);
 		String res = executeRequest(client, request);
+		if (res == null) throw new ConnectTimeoutException();
 		return stringToJSONArray(res);
 	}
 
-	public static JSONObject SendHttpPost(String url, JSONObject objSend) {
+	public static JSONObject SendHttpPost(String url, JSONObject objSend) throws ConnectTimeoutException  {
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost request = new HttpPost(url);
 
 		initRequest(request);
 		setSendObject(request, objSend);
 		String res = executeRequest(client, request);
+		if (res == null) throw new ConnectTimeoutException();
 		return stringToJSONObject(res);	}
 	
-	public static JSONObject SendHttpDelete(String url) {
+	public static JSONObject SendHttpDelete(String url) throws ConnectTimeoutException  {
 
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpDelete request = new HttpDelete(url);
 
 		initRequest(request);
 		String res = executeRequest(client, request);
+		if (res == null) throw new ConnectTimeoutException();
 		return stringToJSONObject(res);
 	}
 
-	public static JSONObject SendHttpPut(String url, JSONObject objSend) {
+	public static JSONObject SendHttpPut(String url, JSONObject objSend) throws ConnectTimeoutException {
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPut request = new HttpPut(url);
 
 		initRequest(request);
 		setSendObject(request, objSend);
 		String res = executeRequest(client, request);
+		if (res == null) throw new ConnectTimeoutException();
 		return stringToJSONObject(res);
 	}
 	
@@ -97,7 +103,8 @@ public class HttpClient {
 	}
 	
 	private static String handleResponse(HttpResponse response) {
-		
+		if (response == null)
+			return null;
 		try {
 			HttpEntity entity = response.getEntity();
 	
@@ -116,11 +123,14 @@ public class HttpClient {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 		return null;
 	}
 	
 	private static String executeRequest(DefaultHttpClient client, HttpRequestBase request) {
+		if (client == null || request == null)
+			return null;
 		try {
 			long t = System.currentTimeMillis();
 			HttpResponse response = (HttpResponse) client.execute(request);
@@ -129,10 +139,11 @@ public class HttpClient {
 			
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	private static JSONObject stringToJSONObject(String str) {

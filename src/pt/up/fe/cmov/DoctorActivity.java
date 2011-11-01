@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class DoctorActivity extends ListActivity implements OnClickListener{
 
@@ -50,8 +52,16 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
         setContentView(R.layout.doctorview);
         String weekDay = new String("");
         
-        appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER,LoginActivity.loginDoctor.getId());
-		int size = 0;
+        appointments = AppointmentOperations.getRemoteServerAllAppointment(this, DoctorOperations.DOCTOR_CONTROLER,LoginActivity.loginDoctor.getId());
+		
+        if (appointments.isEmpty())
+        {
+        	TextView title = (TextView) findViewById(R.id.nextAppsTitle);
+        	title.setTextSize(12.0f);
+        	title.setText("No appointments... \nCheck your connection with the server");
+        }
+        
+        int size = 0;
 		if(appointments.size() < 4) size = appointments.size(); else size = 3;
 		for(int i = 0; i < size;i++){
 
@@ -60,7 +70,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 				items.add(new SectionItem(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime())));
 			}
 
-	        Patient p = PatientOperations.getRemoteServerPatient(appointments.get(i).getPatientId());
+	        Patient p = PatientOperations.getRemoteServerPatient(this, appointments.get(i).getPatientId());
 			items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),p.getName()));			
 		}
 		
@@ -77,16 +87,20 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 
 	@Override
 	public void onClick(View v) {
-		Intent k = new Intent(DoctorActivity.this, ListAppointmentActivity.class);
-		startActivity(k);
-		
+		if (appointments.isEmpty()) {
+			Toast.makeText(DoctorActivity.this, "No appointments in the system...", Toast.LENGTH_LONG).show();
+		}
+		else {
+			Intent k = new Intent(DoctorActivity.this, ListAppointmentActivity.class);
+			startActivity(k);
+		}
 	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		if(!items.get(position).isSection()){
 			int pos = ((EntryItem)items.get(position)).getPos();
-			ListAppointmentActivity.p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(pos).getPatientId());
+			ListAppointmentActivity.p = PatientOperations.getRemoteServerPatient(this, DoctorActivity.appointments.get(pos).getPatientId());
 			Intent k = new Intent(DoctorActivity.this, PatientViewActivity.class);
 			startActivity(k);
 		}

@@ -38,8 +38,11 @@ public class PatientActivity extends ListActivity {
 		setContentView(R.layout.patientview);
 		
 		
-		appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
+		appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(this, PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
 		
+		if (appointmentsPatients == null) {
+			appointmentsPatients = AppointmentOperations.queryAppointments(this, "patient_id = ?", new String[]{"" + LoginActivity.loginPatient.getId()}, null);
+		}
 		
 		View header = getLayoutInflater().inflate(R.layout.header, null);
 		ListView listView = getListView();
@@ -86,6 +89,10 @@ public class PatientActivity extends ListActivity {
 
 	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
 	        
+	        if (doc == null) {
+	        	doc = DoctorOperations.getDoctor(this, appointmentsPatients.get(i).getDoctorId());
+	        }
+	        
 			items.add(new EntryItem(i,doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
 					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
 		}
@@ -94,7 +101,7 @@ public class PatientActivity extends ListActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(positionSelected != -1){
-			appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
+			appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(this, PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
 			itemsList();
 			EntryAdapter adapter = new EntryAdapter(this, items);
 			setListAdapter(adapter);

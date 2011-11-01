@@ -2,8 +2,6 @@ package pt.up.fe.cmov;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -15,6 +13,7 @@ import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
+import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -129,7 +128,6 @@ public class ScheduleActivity extends Activity {
         setContentView(R.layout.scheduleplanner);
         
         scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, VIEW_SCHEDULE);
-        //int scheduleType = getIntent().getIntExtra(EXTRA_SCHEDULE_TYPE, PLANNER_SCHEDULE);
         
         days = new HashMap<String, ScheduleAdapter>();
         panelOrder = new ArrayList<String>();
@@ -173,9 +171,14 @@ public class ScheduleActivity extends Activity {
 		ArrayList<SchedulePlan> plans = DoctorOperations.getRemoteCurrentPlans(this, doctorId);
 		
 		if (plans == null) {
-			Toast.makeText(this, "This doctor has no Schedule Plan", Toast.LENGTH_LONG).show();
-			this.finish();
-			return;
+			if (scheduleType == VIEW_SCHEDULE) {
+				plans = SchedulePlanOperations.querySchedulePlans(this, "doctor_id = ?", new String[] {"" + doctorId}, null);
+			}
+			else {
+				Toast.makeText(this, "This doctor has no Schedule Plan", Toast.LENGTH_LONG).show();
+				this.finish();
+				return;
+			}
 		}
 		
 		Date lastStartDate = null;
@@ -185,8 +188,17 @@ public class ScheduleActivity extends Activity {
 			SchedulePlan plan = plans.get(a);
 		
 			ArrayList<Schedule> schedules = ScheduleOperations.getRemoteSchedules(this, plan.getId());
+			boolean connected = true;
+			if (schedules == null) {
+				schedules = ScheduleOperations.querySchedules(this, "schedule_plan_id = ?", new String[] {"" + plan.getId()}, null);
+				connected = false;
+			}
 			
-			ArrayList<Appointment> appointments = AppointmentOperations.getRemoteServerAllAppointment(DoctorOperations.DOCTOR_CONTROLER, doctorId);
+			ArrayList<Appointment> appointments = null;
+			if (connected)
+				appointments = AppointmentOperations.getRemoteServerAllAppointment(this, DoctorOperations.DOCTOR_CONTROLER, doctorId);
+			else
+				appointments = new ArrayList<Appointment>();
 			
 			HashMap<Integer, ArrayList<Appointment>> scheduleAppointments = new HashMap<Integer, ArrayList<Appointment>>();
 	
@@ -338,13 +350,11 @@ public class ScheduleActivity extends Activity {
 	private void scheduleAppointment() {
 		Appointment appointment = new Appointment(-1, patientId, selectedSchedule.getScheduleId(), doctorId, selectedSchedule.getDate());
 		
-		AppointmentOperations.createAppointment(this, appointment);
+		AppointmentOperations.createAppointment(this, appointment, true);
 		
 		selectedSchedule.setAppointment(appointment);
 		selectedSchedule.toggleState();
 		selectedSchedule.setOnClickListener(null);
 		
 	}
-
-	
 }

@@ -13,7 +13,7 @@
       </LinearLayout>
   </LinearLayout>
   	<LinearLayout android:id="@+id/linearLayout1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_above="@+id/linearLayout2" android:orientation="vertical">
-  			<TextView android:id="@+id/textView1" android:textAppearance="?android:attr/textAppearanceLarge" android:gravity="center_horizontal"
+  			<TextView android:id="@+id/nextAppsTitle" android:textAppearance="?android:attr/textAppearanceLarge" android:gravity="center_horizontal"
   			 android:text="@string/next_appointment" android:textColor="#0000ff" android:layout_width="match_parent" android:layout_height="43dp" 
   			 android:textStyle="bold"></TextView>
 			<ListView android:id="@android:id/list" android:layout_height="wrap_content" android:layout_width="match_parent" />	  	</LinearLayout>

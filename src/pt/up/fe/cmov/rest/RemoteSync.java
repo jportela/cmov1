@@ -1,18 +1,22 @@
 package pt.up.fe.cmov.rest;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
 import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
+import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
 import pt.up.fe.cmov.operations.SchedulePlanOperations;
@@ -20,6 +24,7 @@ import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.operations.SystemOperations;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 public class RemoteSync {
 	
@@ -44,7 +49,7 @@ public class RemoteSync {
 			needsUpdate |= syncSchedules(context, lastSyncTime);
 			
 			if (patient != null) {
-				needsUpdate |= syncPatientAppointments(lastSyncTime, patient);
+				needsUpdate |= syncPatientAppointments(context, patient);
 			}
 			
 			SystemOperations.updateLastSync(context, lastSyncTime, updateTime);
@@ -57,9 +62,16 @@ public class RemoteSync {
 		return false;
 	}
 
-	private static boolean syncPatientAppointments(Date lastSyncTime, Patient patient) {
-		// TODO Auto-generated method stub
-		return false;
+	private static boolean syncPatientAppointments(Context context, Patient patient) {
+		ArrayList<Appointment> apps = AppointmentOperations.getRemoteServerAllAppointment(context, "patients", patient.getId());
+		
+		for (int i=0; i < apps.size(); i++) {
+			Appointment app = apps.get(i);
+			
+			AppointmentOperations.createOrUpdateAppointment(context, app);
+		}
+		
+		return true;
 		
 	}
 	
@@ -68,7 +80,13 @@ public class RemoteSync {
 
 		boolean needsUpdate = false;
 		
-		JSONArray schedules = RailsRestClient.GetArray("schedules/updated", "time="+dateStr);
+		JSONArray schedules;
+		try {
+			schedules = RailsRestClient.GetArray("schedules/updated", "time="+dateStr);
+		} catch (ConnectTimeoutException e1) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+			return false;
+		}
 		
 		try {
 			for (int i=0; i < schedules.length(); i++) {
@@ -95,7 +113,13 @@ public class RemoteSync {
 
 		boolean needsUpdate = false;
 		
-		JSONArray schedulePlans = RailsRestClient.GetArray("schedule_plans/updated", "time="+dateStr);
+		JSONArray schedulePlans;
+		try {
+			schedulePlans = RailsRestClient.GetArray("schedule_plans/updated", "time="+dateStr);
+		} catch (ConnectTimeoutException e1) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+			return false;
+		}
 		
 		try {
 			for (int i=0; i < schedulePlans.length(); i++) {
@@ -122,7 +146,13 @@ public class RemoteSync {
 		
 		boolean needsUpdate = false;
 		
-		JSONArray doctorsList = RailsRestClient.GetArray("doctors/updated", "time="+dateStr);
+		JSONArray doctorsList;
+		try {
+			doctorsList = RailsRestClient.GetArray("doctors/updated", "time="+dateStr);
+		} catch (ConnectTimeoutException e1) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+			return false;
+		}
 		
 		try {
 			for (int i=0; i < doctorsList.length(); i++) {
@@ -150,7 +180,13 @@ public class RemoteSync {
 		
 		boolean needsUpdate = false;
 		
-		JSONArray specialitiesList = RailsRestClient.GetArray("doctors/specialities/updated", "time="+dateStr);
+		JSONArray specialitiesList;
+		try {
+			specialitiesList = RailsRestClient.GetArray("doctors/specialities/updated", "time="+dateStr);
+		} catch (ConnectTimeoutException e1) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+			return false;
+		}
 		
 		try {
 			for (int i=0; i < specialitiesList.length(); i++) {
