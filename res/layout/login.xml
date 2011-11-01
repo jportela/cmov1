@@ -21,7 +21,7 @@
       <LinearLayout android:paddingTop="10dip" android:orientation="horizontal" android:layout_width="match_parent" 
   				android:id="@+id/linearLayout8" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
       <LinearLayout android:layout_weight="1" android:layout_height="match_parent" android:id="@+id/linearLayout4" android:layout_width="match_parent">
-          <Button android:text="Login" android:id="@+id/loginConfirmation" android:layout_width="match_parent" android:layout_height="wrap_content"></Button>
+          <Button android:text="Login" android:id="@+id/loginConf" android:layout_width="match_parent" android:layout_height="wrap_content"></Button>
       </LinearLayout>
       <LinearLayout android:layout_weight="1" android:layout_height="match_parent" android:id="@+id/linearLayout5" android:layout_width="match_parent">
           <Button android:text="Register" android:id="@+id/registerPatient" android:layout_height="wrap_content" android:layout_width="match_parent"></Button>

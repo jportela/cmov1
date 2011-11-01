@@ -41,7 +41,7 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         
-        final Button button = (Button) findViewById(R.id.loginConfirmation);
+        final Button button = (Button) findViewById(R.id.loginConf);
         final Button register = (Button) findViewById(R.id.registerPatient);
         button.setOnClickListener(this);
         register.setOnClickListener(this);
@@ -50,8 +50,8 @@ public class LoginActivity extends Activity implements Runnable,OnClickListener{
 	public void onClick(View v) {
 		switch(v.getId())
 		{
-		case R.id.loginConfirmation:
-			dialog = ProgressDialog.show(this, "Loading", "Wait a few seconds", true,
+		case R.id.loginConf:
+			dialog = ProgressDialog.show(this, "Loading", "Wait for a few seconds", true,
 	                false);
 	    	username = ((AutoCompleteTextView) findViewById(R.id.usernameField)).getText().toString();
 	        password = ((EditText) findViewById(R.id.passwordField)).getText().toString();
