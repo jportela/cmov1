@@ -1,15 +1,7 @@
 package pt.up.fe.cmov.entities;
 
-import java.util.HashMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import pt.up.fe.cmov.providers.SpecialityContentProvider;
-import pt.up.fe.cmov.rest.RailsRestClient;
 import android.net.Uri;
-import android.util.Log;
 
 public class Speciality {
 	

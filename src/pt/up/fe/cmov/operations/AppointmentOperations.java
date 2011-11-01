@@ -10,8 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import pt.up.fe.cmov.entities.Appointment;
-import pt.up.fe.cmov.entities.Doctor;
-import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.rest.JSONOperations;
 import pt.up.fe.cmov.rest.RailsRestClient;
 import android.content.ContentUris;
@@ -50,7 +48,7 @@ public static final String APPOINTMENT_CONTROLER = "appointments";
 			values.put(Appointment.APPOINTMENT_SCHEDULE_ID, appointment.getScheduleId());
 			values.put(Appointment.APPOINTMENT_DOCTOR_ID, appointment.getDoctorId());
 			values.put(Appointment.APPOINTMENT_DATE,JSONOperations.dbDateFormater.format(appointment.getDate()));
-			Uri uri = context.getContentResolver().insert(Appointment.CONTENT_URI, values);		
+			context.getContentResolver().insert(Appointment.CONTENT_URI, values);		
 		}
 		
 		return true;

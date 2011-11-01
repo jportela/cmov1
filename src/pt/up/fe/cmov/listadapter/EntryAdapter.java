@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import pt.up.fe.cmov.R;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
