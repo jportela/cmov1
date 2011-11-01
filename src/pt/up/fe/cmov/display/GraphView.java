@@ -78,11 +78,12 @@ public class GraphView extends View {
 					float val = values.get(i) - min;
 					float rat = val / diff;
 					float h = graphheight * rat;
-					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
 					paint.setColor(Color.BLACK);
 					canvas.drawText(verlabels.get(i), 10, (border - h) + graphheight, paint);
 					paint.setColor(Color.LTGRAY);
 					canvas.drawLine(horstart, (border - h) + graphheight, width, (border - h) + graphheight, paint);
+					paint.setColor(Color.BLACK);
+					canvas.drawRect((i * colwidth) + horstart, (border - h) + graphheight, ((i * colwidth) + horstart) + (colwidth - 1), height - (border - 1), paint);
 				}
 			} else {
 				float datalength = values.size();
@@ -94,14 +95,15 @@ public class GraphView extends View {
 					float val = values.get(i) - min;
 					float rat = val / diff;
 					float h = graphheight * rat;
-					if (i > 0){
-						paint.setStrokeWidth(8);
-						canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
-					}
 					canvas.drawText(verlabels.get(i), 10, (border - h) + graphheight, paint);
 					paint.setStrokeWidth(1);
 					paint.setColor(Color.LTGRAY);
 					canvas.drawLine(horstart, (border - h) + graphheight, width, (border - h) + graphheight, paint);
+					if (i > 0){
+						paint.setStrokeWidth(8);
+						paint.setColor(Color.BLACK);
+						canvas.drawLine(((i - 1) * colwidth) + (horstart + 1) + halfcol, (border - lasth) + graphheight, (i * colwidth) + (horstart + 1) + halfcol, (border - h) + graphheight, paint);
+					}
 					lasth = h;
 				}
 			}

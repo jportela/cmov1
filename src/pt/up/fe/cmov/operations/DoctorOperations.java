@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DoctorOperations {
 	
@@ -38,6 +40,7 @@ public class DoctorOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -67,7 +70,9 @@ public class DoctorOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
-			}
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+			}				
+
 		}
 		
 		ContentValues values = new ContentValues();
@@ -93,6 +98,7 @@ public class DoctorOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -107,13 +113,15 @@ public class DoctorOperations {
 	} 
 	
 	public static Doctor getRemoteServerDoctor(Context context, int id){
-		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(id));
 		try {
-			 return JSONOperations.JSONToDoctor(context, json);
+			JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(id));
+			return JSONOperations.JSONToDoctor(context, json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 		}
 		return null;
 	}
@@ -134,9 +142,9 @@ public class DoctorOperations {
 			   String name = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_NAME));
 			   String username = cDoctor.getString(cDoctor.getColumnIndex(Doctor.PERSON_USERNAME)); 
 			   String photo = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_PHOTO)); 
-			   String specialityId = cDoctor.getString(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
+			   int specialityId = cDoctor.getInt(cDoctor.getColumnIndex(Doctor.DOCTOR_SPECIALITY)); 
 			   d = new Doctor(id,name,birthdate,username,photo,
-					   Speciality.Records.get(Integer.parseInt(specialityId)));
+					   SpecialityOperations.getSpeciality(context, specialityId));
 			} 
 		cDoctor.close();
 		return d;
@@ -144,10 +152,14 @@ public class DoctorOperations {
 	
 	public static ArrayList<Doctor> queryDoctorsRemoteServer(Context context) throws JSONException, ParseException{
         ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
-        JSONArray jsonArrays = RailsRestClient.GetArray("doctors");
-        for(int i = 0; i < jsonArrays.length();i++){
-        	queryDoctors.add(JSONOperations.JSONToDoctor(context, jsonArrays.getJSONObject(i)));
-        }
+        try {
+	        JSONArray jsonArrays = RailsRestClient.GetArray("doctors");
+	        for(int i = 0; i < jsonArrays.length();i++){
+	        	queryDoctors.add(JSONOperations.JSONToDoctor(context, jsonArrays.getJSONObject(i)));
+	        }
+        } catch (ConnectTimeoutException e) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
+		}
         return queryDoctors;
      }
 		
@@ -202,7 +214,13 @@ public class DoctorOperations {
 	}
 	
 	public static ArrayList<String> getRemoteDoctorMonthsApps(Context context, int doctorId){
-		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		JSONObject json = null;
+		try {
+			json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		} catch (ConnectTimeoutException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			 return JSONOperations.JSONToMonth(context, json);
 		} catch (JSONException e) {
@@ -212,7 +230,13 @@ public class DoctorOperations {
 	}
 	
 	public static Patient getRemoteDoctorMorePatient(Context context, int doctorId){
-		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		JSONObject json = null;
+		try {
+			json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		} catch (ConnectTimeoutException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			 return JSONOperations.JSONToMoreAppsPatient(context, json);
 		} catch (JSONException e) {
@@ -224,21 +248,23 @@ public class DoctorOperations {
 	}
 	
 	public static SchedulePlan getRemoteCurrentPlan(Context context, int doctorId){
-		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plan");
-		try {
-			 return JSONOperations.JSONToSchedulePlan(json);
+		try {	
+			JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plan");
+			return JSONOperations.JSONToSchedulePlan(json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 		}
 		return null;
 	}
 	
 	public static ArrayList<SchedulePlan> getRemoteCurrentPlans(Context context, int doctorId){
-		JSONArray json = RailsRestClient.GetArray(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plans");
 		ArrayList<SchedulePlan> plans = new ArrayList<SchedulePlan>();
 		try {
+			JSONArray json = RailsRestClient.GetArray(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + "current_plans");
 			for (int i=0; i < json.length(); i++) {
 				plans.add(JSONOperations.JSONToSchedulePlan(json.getJSONObject(i)));
 			}
@@ -247,19 +273,22 @@ public class DoctorOperations {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 		}
 		return null;
 	}
 	
 	public static Appointment getFurthestAppointment(Context context, int doctorId) {
-		
-		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/furthest_appointment");
 		try {
-			 return JSONOperations.JSONToAppointment(json);
+			JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/furthest_appointment");
+			return JSONOperations.JSONToAppointment(json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
+			Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 		}
 		return null;
 	}

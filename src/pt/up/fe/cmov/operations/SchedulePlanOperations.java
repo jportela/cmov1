@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SchedulePlanOperations {
 	
@@ -34,6 +36,7 @@ public class SchedulePlanOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -44,7 +47,7 @@ public class SchedulePlanOperations {
 		}
 		
 		values.put(SchedulePlan.SCHEDULE_STARTDATE,JSONOperations.dbDateFormater.format(schedulePlan.getStartDate()));
-		values.put(SchedulePlan.SCHEDULE_DOCTOR_ID, schedulePlan.getId());
+		values.put(SchedulePlan.SCHEDULE_DOCTOR_ID, schedulePlan.getDoctorId());
 		context.getContentResolver().insert(SchedulePlan.CONTENT_URI, values);		
 		
 		return schedulePlan.getId();
@@ -58,6 +61,7 @@ public class SchedulePlanOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -65,7 +69,7 @@ public class SchedulePlanOperations {
 		
 		values.put(SchedulePlan.SCHEDULE_PLAN_ID,schedulePlan.getId());
 		values.put(SchedulePlan.SCHEDULE_STARTDATE,JSONOperations.dbDateFormater.format(schedulePlan.getStartDate()));
-		values.put(SchedulePlan.SCHEDULE_DOCTOR_ID, schedulePlan.getId());
+		values.put(SchedulePlan.SCHEDULE_DOCTOR_ID, schedulePlan.getDoctorId());
 		Uri updateSchedulePlanUri = ContentUris.withAppendedId(SchedulePlan.CONTENT_URI, schedulePlan.getId());
 		context.getContentResolver().update(updateSchedulePlanUri, values, null, null);
 		
@@ -79,6 +83,7 @@ public class SchedulePlanOperations {
 			}catch(Exception e){
 				e.printStackTrace();
 				Log.w("NO Internet", "You don't have a internet connection");
+				Toast.makeText(context, "No internet connection... Retry later", Toast.LENGTH_LONG).show();
 			}
 		}
 		
@@ -93,13 +98,14 @@ public class SchedulePlanOperations {
 	} 
 	
 	public static SchedulePlan getRemoteServerSchedulePlan(Context context, int id){
-		JSONObject json = RailsRestClient.Get(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(id));
-		try {
-			 return JSONOperations.JSONToSchedulePlan(json);
+		try {	
+			JSONObject json = RailsRestClient.Get(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(id));
+			return JSONOperations.JSONToSchedulePlan(json);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
+		} catch (ConnectTimeoutException e) {
 		}
 		return null;
 	}
@@ -119,20 +125,22 @@ public class SchedulePlanOperations {
 	}
 	
 	public static ArrayList<Schedule> getRemoteSchedules(Context context, int schedulePlanId) {
-		JSONArray jsonArray = RailsRestClient.GetArray(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER);
 		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
+		try {
+
+			JSONArray jsonArray = RailsRestClient.GetArray(SCHEDULE_PLAN_CONTROLLER + "/" + Integer.toString(schedulePlanId) + "/" + SCHEDULE_CONTROLLER);
 		
-		for (int i=0; i < jsonArray.length(); i++) {
-			try {
-				JSONObject obj = jsonArray.getJSONObject(i);
-				Schedule schedule = JSONOperations.JSONToSchedule(obj);
-				schedules.add(schedule);
-				Log.i("SCHEDULE", schedule.getStartDate().toString() + "---" + schedule.getEndDate().toString());
-			} catch (JSONException e) {
-				Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
-			} catch (ParseException e) {
-				Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
+			for (int i=0; i < jsonArray.length(); i++) {
+					JSONObject obj = jsonArray.getJSONObject(i);
+					Schedule schedule = JSONOperations.JSONToSchedule(obj);
+					schedules.add(schedule);
+					Log.i("SCHEDULE", schedule.getStartDate().toString() + "---" + schedule.getEndDate().toString());
 			}
+		} catch (JSONException e) {
+			Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
+		} catch (ParseException e) {
+			Log.e("SCHEDULE_PLAN", "Couldn't decode JSON object");
+		} catch (ConnectTimeoutException e) {
 		}
 		
 		return schedules;
@@ -147,4 +155,26 @@ public class SchedulePlanOperations {
 		}
 		return true;
 	}
+	
+	public static ArrayList<SchedulePlan> querySchedulePlans(Context context, String selection, String[] selectedArguments, String order){
+        ArrayList<SchedulePlan> queryPlans = new ArrayList<SchedulePlan>();
+        Cursor cSchedulePlan = context.getContentResolver().query(SchedulePlan.CONTENT_URI, null, selection, selectedArguments, order); 
+        while (cSchedulePlan.moveToNext()) { 
+        	int id = cSchedulePlan.getInt(cSchedulePlan.getColumnIndex(SchedulePlan.SCHEDULE_PLAN_ID)); 
+            String dateStr = cSchedulePlan.getString(cSchedulePlan.getColumnIndex(SchedulePlan.SCHEDULE_STARTDATE));
+    	 	String doctor_id = cSchedulePlan.getString(cSchedulePlan.getColumnIndex(SchedulePlan.SCHEDULE_DOCTOR_ID)); 
+		   	
+    	 	Date date = null;
+    	 	try {
+    	 		date = JSONOperations.dbDateFormater.parse(dateStr);
+    	 	} catch (ParseException e) {
+		    	 e.printStackTrace();
+		     }
+    	 	SchedulePlan sch = new SchedulePlan(id,Integer.parseInt(doctor_id),date); 
+             
+            queryPlans.add(sch);
+         } 
+        cSchedulePlan.close();
+        return queryPlans;
+     }
 }

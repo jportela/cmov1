@@ -34,7 +34,7 @@ public class ListAppointmentActivity extends ListActivity {
 				items.add(new SectionItem(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime())));
 			}
 
-	        Patient pat = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(i).getPatientId());
+	        Patient pat = PatientOperations.getRemoteServerPatient(this, DoctorActivity.appointments.get(i).getPatientId());
 
 			
 			items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),pat.getName()));			
@@ -48,7 +48,7 @@ public class ListAppointmentActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		if(!items.get(position-1).isSection()){
 			int pos = ((EntryItem)items.get(position-1)).getPos();
-			p = PatientOperations.getRemoteServerPatient(DoctorActivity.appointments.get(pos).getPatientId());
+			p = PatientOperations.getRemoteServerPatient(this, DoctorActivity.appointments.get(pos).getPatientId());
 			Intent k = new Intent(ListAppointmentActivity.this, PatientViewActivity.class);
 			startActivity(k);
 		}

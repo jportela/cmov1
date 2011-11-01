@@ -5,7 +5,9 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.providers.DoctorContentProvider;
+import android.content.Context;
 import android.net.Uri;
 
 public class Doctor extends Person {
@@ -20,14 +22,14 @@ public class Doctor extends Person {
 	public static final Uri CONTENT_URI = Uri.parse("content://" + DoctorContentProvider.AUTHORITY + "/doctors");	
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.cmov.doctors";
 	
-	public Doctor(JSONObject obj) {
+	public Doctor(Context context, JSONObject obj) {
 		super();
 		try {
 			this.id = obj.getInt("id");
 			this.name = obj.getString("name");
 			//String birthDate = obj.getString("date");
 			this.photo = obj.getString("photo");
-			this.speciality = Speciality.Records.get(id);
+			this.speciality = SpecialityOperations.getSpeciality(context, obj.getInt("speciality_id"));
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
