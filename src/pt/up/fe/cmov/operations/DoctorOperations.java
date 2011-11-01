@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Doctor;
+import pt.up.fe.cmov.entities.Patient;
 import pt.up.fe.cmov.entities.Person;
 import pt.up.fe.cmov.entities.SchedulePlan;
 import pt.up.fe.cmov.entities.Speciality;
@@ -26,6 +27,7 @@ import android.util.Log;
 public class DoctorOperations {
 	
 	public static final String DOCTOR_CONTROLER = "doctors";
+	private static String current_stats = "stats";
 	
 	
 	public static boolean createDoctor(Context context, Doctor doctor, boolean isRemote){
@@ -197,6 +199,28 @@ public class DoctorOperations {
 		else {
 			updateDoctor(context, doctor, false);
 		}		
+	}
+	
+	public static ArrayList<String> getRemoteDoctorMonthsApps(Context context, int doctorId){
+		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		try {
+			 return JSONOperations.JSONToMonth(context, json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+        return null;
+	}
+	
+	public static Patient getRemoteDoctorMorePatient(Context context, int doctorId){
+		JSONObject json = RailsRestClient.Get(DOCTOR_CONTROLER + "/" + Integer.toString(doctorId) + "/" + current_stats);
+		try {
+			 return JSONOperations.JSONToMoreAppsPatient(context, json);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+        return null;
 	}
 	
 	public static SchedulePlan getRemoteCurrentPlan(Context context, int doctorId){

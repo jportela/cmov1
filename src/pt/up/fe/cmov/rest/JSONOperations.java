@@ -3,8 +3,10 @@ package pt.up.fe.cmov.rest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,7 @@ public class JSONOperations {
 	public static final SimpleDateFormat formatter = new SimpleDateFormat("kk:mm");  
 	public static final DateFormat dbDateTimeZoneFormater = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssz");
 	public static final SimpleDateFormat weekDay = new SimpleDateFormat("EEEE, dd MMM yyyy");
+	public static final SimpleDateFormat monthFormater = new SimpleDateFormat("MMM yyyy");
 	public static final SimpleDateFormat completeDate = new SimpleDateFormat("EEEE, dd MMM yyyy kk:mm");
 
 	public static JSONObject doctorToJSON(Doctor doctor) throws JSONException{
@@ -150,4 +153,25 @@ public class JSONOperations {
 
 		return obj;
 	}
+
+	public static ArrayList<String> JSONToMonth(Context context, JSONObject json) throws JSONException {
+		JSONArray jsonsNames = json.getJSONArray("months");
+		JSONArray jsonsValues = json.getJSONArray("months_apps");
+		ArrayList<String> monthsStats = new ArrayList<String>();
+		for(int i=0; i < jsonsNames.length();i++){
+			monthsStats.add(jsonsNames.getString(i));
+			monthsStats.add(jsonsValues.getString(i));
+		}
+		return monthsStats;
+		
+	}
+	
+	public static Patient JSONToMoreAppsPatient(Context context, JSONObject json) throws JSONException, ParseException {
+		JSONObject patient = json.getJSONObject("patient");
+		Patient pat = JSONOperations.JSONToPatient(patient);
+		int count = json.getInt("patient_count");
+		pat.setId(count);
+		return pat;
+	}
+	
 }

@@ -7,6 +7,7 @@ import pt.up.fe.cmov.listadapter.EntryAdapter;
 import pt.up.fe.cmov.listadapter.EntryItem;
 import pt.up.fe.cmov.listadapter.Item;
 import pt.up.fe.cmov.listadapter.SectionItem;
+import pt.up.fe.cmov.operations.DoctorOperations;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,8 +25,9 @@ public class StatisticsActivity extends ListActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		
+		Patient favPatient = DoctorOperations.getRemoteDoctorMorePatient(this, LoginActivity.loginDoctor.getId());
 		items.add(new SectionItem("Statistics from " + LoginActivity.loginDoctor.getName()));
-		
+		items.add(new EntryItem(2,"Best Patient " + favPatient.getName(),"It has " + favPatient.getId() + " appointments"));
 		items.add(new EntryItem(1,"Number of Appointments","Check the number of appointments in each month"));
 		
 		EntryAdapter adapter = new EntryAdapter(this, items);
