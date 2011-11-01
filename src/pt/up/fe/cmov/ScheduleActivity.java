@@ -273,7 +273,7 @@ public class ScheduleActivity extends Activity {
 							adapter.addSchedule(j, button);
 						}
 						else {
-							ScheduleAdapter adapter = new ScheduleAdapter(this);
+							ScheduleAdapter adapter = new ScheduleAdapter();
 							adapter.addSchedule(button);
 							days.put(label, adapter);
 						}

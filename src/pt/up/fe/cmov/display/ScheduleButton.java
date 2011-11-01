@@ -8,7 +8,6 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.view.View;
 import android.widget.Button;
 
 public class ScheduleButton extends Button {
@@ -24,16 +23,6 @@ public class ScheduleButton extends Button {
     private Appointment appointment;
     private int scheduleId;
     private Date date;
-    
-	private OnClickListener scheduleButtonListener =    
-		new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			toggleState();
-		}
-
-    };
 
 	public ScheduleButton(Context context, int id, int scheduleId, Date date) {
 		super(context);

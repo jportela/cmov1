@@ -88,7 +88,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 
 	@Override
 	public void onClick(View v) {
-		if (appointments.isEmpty()) {
+		if (appointments == null) {
 			Toast.makeText(DoctorActivity.this, "No appointments in the system...", Toast.LENGTH_LONG).show();
 		}
 		else {

@@ -2,18 +2,15 @@ package pt.up.fe.cmov.display;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class ScheduleAdapter extends BaseAdapter {
 
-    private Context context;
     private ArrayList<ScheduleButton> buttons;
 
-    public ScheduleAdapter(Context context) {
-        this.context = context;
+    public ScheduleAdapter() {
         buttons = new ArrayList<ScheduleButton>();
     }
 
