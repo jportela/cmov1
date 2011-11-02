@@ -13,6 +13,7 @@ import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.operations.SpecialityOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
+import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class PatientActivity extends ListActivity {
 	
@@ -31,27 +33,19 @@ public class PatientActivity extends ListActivity {
 	static public int positionSelected = -1;
 	private static int tempPosition = -1;
 	private final int searchBtnId = Menu.FIRST;
+	private final int refreshId = Menu.FIRST + 1;
+
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		
 		setContentView(R.layout.patientview);
 		
-		
-		appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(this, PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
-		
-		if (appointmentsPatients == null) {
-			appointmentsPatients = AppointmentOperations.queryAppointments(this, "patient_id = ?", new String[]{"" + LoginActivity.loginPatient.getId()}, null);
-		}
-		
 		View header = getLayoutInflater().inflate(R.layout.header, null);
 		ListView listView = getListView();
 		listView.addHeaderView(header);
 		
-		itemsList();
-
-		EntryAdapter adapter = new EntryAdapter(this, items);
-		setListAdapter(adapter);
+		listItems();
 		
 		Button newAppointment = (Button) findViewById(R.id.newAppointment);
 		newAppointment.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +54,35 @@ public class PatientActivity extends ListActivity {
     			startActivityForResult(k,2);
             }
         });
+	}
+	
+	public void listItems(){
+		appointmentsPatients = AppointmentOperations.getRemoteServerAllAppointment(this, PatientOperations.PATIENT_CONTROLER,LoginActivity.loginPatient.getId());
+		
+		if (appointmentsPatients == null) {
+			appointmentsPatients = AppointmentOperations.queryAppointments(this, "patient_id = ?", new String[]{"" + LoginActivity.loginPatient.getId()}, null);
+		}
+		
+		items = new ArrayList<Item>();
+		String weekDay = new String();
+		for(int i = 0; i < appointmentsPatients.size();i++){
+			if(!weekDay.equals(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime()))){
+				weekDay = JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime());
+				items.add(new SectionItem(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime())));
+			}
+
+	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
+	        
+	        if (doc == null) {
+	        	doc = DoctorOperations.getDoctor(this, appointmentsPatients.get(i).getDoctorId());
+	        }
+	        
+			items.add(new EntryItem(i,doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
+					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
+		}
+
+		EntryAdapter adapter = new EntryAdapter(this, items);
+		setListAdapter(adapter);
 	}
 	
 	public static int isToDelete(){
@@ -79,23 +102,7 @@ public class PatientActivity extends ListActivity {
 	}
 	
 	public void itemsList(){
-		items = new ArrayList<Item>();
-		String weekDay = new String();
-		for(int i = 0; i < appointmentsPatients.size();i++){
-			if(!weekDay.equals(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime()))){
-				weekDay = JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime());
-				items.add(new SectionItem(JSONOperations.weekDay.format(appointmentsPatients.get(i).getDate().getTime())));
-			}
-
-	        Doctor doc = DoctorOperations.getRemoteServerDoctor(this,appointmentsPatients.get(i).getDoctorId());
-	        
-	        if (doc == null) {
-	        	doc = DoctorOperations.getDoctor(this, appointmentsPatients.get(i).getDoctorId());
-	        }
-	        
-			items.add(new EntryItem(i,doc.getName(),JSONOperations.formatter.format(appointmentsPatients.get(i).getDate().getTime()) + "\n" 
-					  + "\n" + SpecialityOperations.getSpeciality(this,doc.getSpeciality().getId()).getName()));			
-		}
+		
 	}
 	
 	@Override
@@ -113,6 +120,8 @@ public class PatientActivity extends ListActivity {
 	  public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuItem searchMItm = menu.add(Menu.NONE,searchBtnId ,searchBtnId,"Logout");
 	    searchMItm.setIcon(R.drawable.logout);
+	    MenuItem refreshMenu = menu.add(Menu.NONE,refreshId ,refreshId,"Refresh");
+	    refreshMenu.setIcon(R.drawable.refresh);
 	    return super.onCreateOptionsMenu(menu);
 	  }
 	
@@ -120,10 +129,15 @@ public class PatientActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
-	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        	LoginActivity.loginPatient = null;
 	        	finish();
-	        	startActivity(intent);
+	        	LoginActivity.loginPatient = null;
+	        	Intent k = new Intent(PatientActivity.this, LoginActivity.class);
+				startActivity(k);
+	        break;
+	        case refreshId:
+	        	Toast.makeText(this, "Refreshing please wait", Toast.LENGTH_LONG).show();
+	            listItems();	      
+	        	RemoteSync.oneClickSync(this, null);
 	        break;
 	    }
 	    return true;

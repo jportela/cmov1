@@ -14,6 +14,7 @@ import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
+import pt.up.fe.cmov.rest.RemoteSync;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
     ArrayList<Item> items = new ArrayList<Item>();
     private final int searchBtnId = Menu.FIRST;
     private final int statsId = Menu.FIRST + 1;
+    private final int refreshId = Menu.FIRST + 2;
 
 	private OnClickListener scheduleButtonListener = new OnClickListener() {
 		
@@ -50,10 +52,22 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.doctorview);
-        String weekDay = new String("");
+    		   
+        final Button button = (Button) findViewById(R.id.appointmentsButton);
+        button.setOnClickListener(this);
+        
+        ListItems();
+        
+        Button scheduleButton = (Button) findViewById(R.id.scheduleButton);
+		scheduleButton.setOnClickListener(scheduleButtonListener);
+	}
+
+	public void ListItems(){
+		String weekDay = new String("");
         
         appointments = AppointmentOperations.getRemoteServerAllAppointment(this, DoctorOperations.DOCTOR_CONTROLER,LoginActivity.loginDoctor.getId());
-		
+		items = new ArrayList<Item>();
+        
         if (appointments == null)
         {
         	TextView title = (TextView) findViewById(R.id.nextAppsTitle);
@@ -74,18 +88,12 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 		        Patient p = PatientOperations.getRemoteServerPatient(this, appointments.get(i).getPatientId());
 				items.add(new EntryItem(i,JSONOperations.formatter.format(DoctorActivity.appointments.get(i).getDate().getTime()),p.getName()));			
 			}
-        }		
+        }
         
         EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);
-        
-        final Button button = (Button) findViewById(R.id.appointmentsButton);
-        button.setOnClickListener(this);
-        
-        Button scheduleButton = (Button) findViewById(R.id.scheduleButton);
-		scheduleButton.setOnClickListener(scheduleButtonListener);
 	}
-
+	
 	@Override
 	public void onClick(View v) {
 		if (appointments == null) {
@@ -113,6 +121,8 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	    searchMItm.setIcon(R.drawable.logout);
 	    MenuItem statsMenu = menu.add(Menu.NONE,statsId ,statsId,"Statistics");
 	    statsMenu.setIcon(R.drawable.stats);
+	    MenuItem refreshMenu = menu.add(Menu.NONE,refreshId ,refreshId,"Refresh");
+	    refreshMenu.setIcon(R.drawable.refresh);
 	    return super.onCreateOptionsMenu(menu);
 	  }
 	
@@ -128,6 +138,11 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	        case statsId:
 	        	Intent inte = new Intent(DoctorActivity.this, StatisticsActivity.class);
 				startActivity(inte);
+	        break;
+	        case refreshId:
+	        	Toast.makeText(this, "Refreshing please wait", Toast.LENGTH_LONG).show();
+	            ListItems();	      
+	        	RemoteSync.oneClickSync(this, null);
 	        break;
 	    }
 	    return true;

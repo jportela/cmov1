@@ -12,7 +12,7 @@
     			 android:stretchColumns = "1">
         <TableRow android:id="@+id/tableRow1" android:layout_height="fill_parent" android:layout_width="fill_parent">
             <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Name" android:id="@+id/name" android:layout_width="fill_parent"></TextView>
-            <EditText android:layout_height="wrap_content" android:id="@+id/patientName" android:layout_width="fill_parent"></EditText>
+            <EditText android:singleLine="true" android:layout_height="wrap_content" android:id="@+id/patientName" android:layout_width="fill_parent"></EditText>
         </TableRow>
         <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
             <TextView android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Address" android:id="@+id/address" android:layout_width="wrap_content"></TextView>
@@ -29,15 +29,15 @@
         </TableRow>
         <TableRow android:id="@+id/tableRow4" android:layout_width="fill_parent" android:layout_height="fill_parent">
             <TextView android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Username"></TextView>
-            <EditText android:id="@+id/patientRegisterUsername" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+            <EditText android:singleLine="true" android:id="@+id/patientRegisterUsername" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
         </TableRow>
 	    <TableRow android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/tableRow5">
 	        <TextView android:id="@+id/textView2" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Password"></TextView>
-	        <EditText android:id="@+id/patientRegisterPassword" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+	        <EditText android:singleLine="true" android:id="@+id/patientRegisterPassword" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
 	    </TableRow>
 	    <TableRow android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/tableRow6">
 	    	<TextView android:id="@+id/patientBirthday" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:text="Birthday"/>
-    		<EditText android:id="@+id/pickDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""/>
+    		<EditText android:editable="false" android:id="@+id/pickDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text=""/>
 	    </TableRow>
 	    
     </TableLayout>

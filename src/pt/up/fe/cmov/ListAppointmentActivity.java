@@ -9,6 +9,7 @@ import pt.up.fe.cmov.listadapter.Item;
 import pt.up.fe.cmov.listadapter.SectionItem;
 import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.rest.JSONOperations;
+import pt.up.fe.cmov.rest.RemoteSync;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ListAppointmentActivity extends ListActivity {
 
@@ -24,10 +26,18 @@ public class ListAppointmentActivity extends ListActivity {
 	ArrayList<Item> items = new ArrayList<Item>();
 	private final int searchBtnId = Menu.FIRST;
     private final int statsId = Menu.FIRST + 1;
+    private final int refreshId = Menu.FIRST + 2;
+
 	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		ListItems();
+	}
 		
+		
+
+	public void ListItems(){
+		items = new ArrayList<Item>();
 		String weekDay = new String();
 		for(int i = 0; i < DoctorActivity.appointments.size();i++){
 			if(!weekDay.equals(JSONOperations.weekDay.format(DoctorActivity.appointments.get(i).getDate().getTime()))){
@@ -44,7 +54,7 @@ public class ListAppointmentActivity extends ListActivity {
 		EntryAdapter adapter = new EntryAdapter(this, items);
 		setListAdapter(adapter);
 	}
-
+	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		if(!items.get(position).isSection()){
@@ -61,6 +71,8 @@ public class ListAppointmentActivity extends ListActivity {
 	    searchMItm.setIcon(R.drawable.logout);
 	    MenuItem statsMenu = menu.add(Menu.NONE,statsId ,statsId,"Statistics");
 	    statsMenu.setIcon(R.drawable.stats);
+	    MenuItem refreshMenu = menu.add(Menu.NONE,refreshId ,refreshId,"Refresh");
+	    refreshMenu.setIcon(R.drawable.refresh);
 	    return super.onCreateOptionsMenu(menu);
 	  }
 	
@@ -76,6 +88,11 @@ public class ListAppointmentActivity extends ListActivity {
 	        case statsId:
 	        	Intent inte = new Intent(ListAppointmentActivity.this, StatisticsActivity.class);
 				startActivity(inte);
+	        break;
+	        case refreshId:
+	        	Toast.makeText(this, "Refreshing please wait", Toast.LENGTH_LONG).show();
+	            ListItems();	      
+	        	RemoteSync.oneClickSync(this, null);
 	        break;
 	    }
 	    return true;
