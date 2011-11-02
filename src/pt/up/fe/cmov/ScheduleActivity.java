@@ -10,8 +10,10 @@ import pt.up.fe.cmov.display.ScheduleButton;
 import pt.up.fe.cmov.entities.Appointment;
 import pt.up.fe.cmov.entities.Schedule;
 import pt.up.fe.cmov.entities.SchedulePlan;
+import pt.up.fe.cmov.listadapter.EntryAdapter;
 import pt.up.fe.cmov.operations.AppointmentOperations;
 import pt.up.fe.cmov.operations.DoctorOperations;
+import pt.up.fe.cmov.operations.PatientOperations;
 import pt.up.fe.cmov.operations.ScheduleOperations;
 import pt.up.fe.cmov.operations.SchedulePlanOperations;
 import android.app.Activity;
@@ -356,5 +358,26 @@ public class ScheduleActivity extends Activity {
 		selectedSchedule.toggleState();
 		selectedSchedule.setOnClickListener(null);
 		
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Button createSchedule = (Button) findViewById(R.id.createSchedule);
+
+		switch(scheduleType) {
+		case VIEW_SCHEDULE:
+			createSchedule.setVisibility(View.VISIBLE);
+			createSchedule.setOnClickListener(createScheduleListener);
+			buildAppoint();
+			buildGrid();
+            break;
+		case APPOINT_SCHEDULE:
+			createSchedule.setVisibility(View.GONE);
+			buildAppoint();
+			buildGrid();
+			break;
+		default:
+			break;
+		}
 	}
 }
