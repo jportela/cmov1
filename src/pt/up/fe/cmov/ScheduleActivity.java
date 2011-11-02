@@ -100,7 +100,7 @@ public class ScheduleActivity extends Activity {
 		public void onClick(View v) {
 			Intent plannerIntent = new Intent(ScheduleActivity.this, PlannerActivity.class);
 			plannerIntent.putExtra(PlannerActivity.PLANNER_DOCTOR_ID, doctorId);
-			startActivity(plannerIntent);
+			startActivityForResult(plannerIntent,0);
 		}
 
     }; 
