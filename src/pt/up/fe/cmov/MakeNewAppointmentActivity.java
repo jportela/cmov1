@@ -59,7 +59,8 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
             scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_TYPE, ScheduleActivity.APPOINT_SCHEDULE);
             scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_DOCTOR, selectedDoctor.getId());
             scheduleIntent.putExtra(ScheduleActivity.EXTRA_SCHEDULE_PATIENT, patientId);
-            startActivity(scheduleIntent);
+            finish();
+            startActivityForResult(scheduleIntent,1);
         return true;
     }
 

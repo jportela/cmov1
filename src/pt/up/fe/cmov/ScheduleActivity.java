@@ -100,7 +100,7 @@ public class ScheduleActivity extends Activity {
 		public void onClick(View v) {
 			Intent plannerIntent = new Intent(ScheduleActivity.this, PlannerActivity.class);
 			plannerIntent.putExtra(PlannerActivity.PLANNER_DOCTOR_ID, doctorId);
-			startActivityForResult(plannerIntent,0);
+			startActivityForResult(plannerIntent, 0);
 		}
 
     }; 
@@ -117,6 +117,7 @@ public class ScheduleActivity extends Activity {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
 	        	LoginActivity.loginDoctor = null;
+	        	LoginActivity.loginPatient = null;
 	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        	finish();
 	        	startActivity(intent);
@@ -142,9 +143,6 @@ public class ScheduleActivity extends Activity {
 		nextButton.setOnClickListener(nextButtonListener);
 		
         buildTableLayout();
-        
-        
-        //linear.addView(text);
 	}
 	
 	private void buildTableLayout() {
@@ -329,6 +327,8 @@ public class ScheduleActivity extends Activity {
 	    	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	    	           public void onClick(DialogInterface dialog, int id) {
 	    	                scheduleAppointment();
+	    	                PatientActivity.positionSelected = 1;
+	    	                finish();
 	    	           }
 	    	       })
 	    	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -363,22 +363,6 @@ public class ScheduleActivity extends Activity {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Button createSchedule = (Button) findViewById(R.id.createSchedule);
-
-		switch(scheduleType) {
-		case VIEW_SCHEDULE:
-			createSchedule.setVisibility(View.VISIBLE);
-			createSchedule.setOnClickListener(createScheduleListener);
-			buildAppoint();
-			buildGrid();
-            break;
-		case APPOINT_SCHEDULE:
-			createSchedule.setVisibility(View.GONE);
-			buildAppoint();
-			buildGrid();
-			break;
-		default:
-			break;
-		}
+		 buildTableLayout();
 	}
 }

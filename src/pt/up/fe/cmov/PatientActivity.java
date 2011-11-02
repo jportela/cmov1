@@ -57,7 +57,7 @@ public class PatientActivity extends ListActivity {
 		newAppointment.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	Intent k = new Intent(PatientActivity.this, MakeNewAppointmentActivity.class);
-    			startActivity(k);
+    			startActivityForResult(k,2);
             }
         });
 	}
