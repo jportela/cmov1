@@ -34,7 +34,7 @@ public class MakeNewAppointmentActivity extends ExpandableListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    	docs = DoctorOperations.queryInnerJoinDoctorSpeciality();
+    	docs = DoctorOperations.queryInnerJoinDoctorSpeciality(this);
 
         // Set up our adapter
         mAdapter = new MyExpandableListAdapter();

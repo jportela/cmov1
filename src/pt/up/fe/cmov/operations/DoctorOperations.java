@@ -190,9 +190,10 @@ public class DoctorOperations {
         return queryDoctors;
      }
 	
-	 public static ArrayList<Doctor> queryInnerJoinDoctorSpeciality(){
+	 public static ArrayList<Doctor> queryInnerJoinDoctorSpeciality(Context context){
         ArrayList<Doctor> queryDoctors = new ArrayList<Doctor>();
-        Cursor cDoctor = DoctorContentProvider.queryDoctorInnerJoinSpeciality(); 
+		Uri queryDoctorUri = Uri.parse(Doctor.CONTENT_URI.toString() + "/spec"); 
+        Cursor cDoctor = context.getContentResolver().query(queryDoctorUri, null, null, null, null); 
         while (cDoctor.moveToNext()) { 
             	 String id = cDoctor.getString(cDoctor.getColumnIndex(Person.PERSON_ID));
             	 String speciality_id = cDoctor.getString(cDoctor.getColumnIndex(Speciality.SPECIALITY_ID));

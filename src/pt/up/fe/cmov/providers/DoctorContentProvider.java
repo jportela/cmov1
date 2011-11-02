@@ -36,6 +36,8 @@ public class DoctorContentProvider extends ContentProvider {
     
     private static final int DOCTOR_ID = 2;
 
+    private static final int DOCTOR_SPEC_JOIN = 3;
+
     private static HashMap<String, String> doctorsProjectionMap;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -119,14 +121,6 @@ public class DoctorContentProvider extends ContentProvider {
         return true;
     }
     
-    public static Cursor queryDoctorInnerJoinSpeciality(){
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-    	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_SNAME + ",d._id,s._id AS speciality_id" + 
-    			" FROM " + GlobalSchema.DOCTORS_TABLE_NAME + " d INNER JOIN  " + GlobalSchema.SPECIALITIES_TABLE_NAME +
-    			" s ON d.speciality_id=s._id ORDER BY s." + Speciality.SPECIALITY_SNAME;
-    	return db.rawQuery(MY_QUERY, new String[]{});
-    }
-    
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -144,7 +138,11 @@ public class DoctorContentProvider extends ContentProvider {
             	String id = uri.getLastPathSegment();
                 c = qb.query(db, projection, Person.PERSON_ID + "= ?", new String[]{id}, null, null, null);
                 break;
-
+            case DOCTOR_SPEC_JOIN:
+            	final String MY_QUERY = "SELECT d." + Person.PERSON_NAME + ",s."+ Speciality.SPECIALITY_SNAME + ",d._id,s._id AS speciality_id" + 
+    			" FROM " + GlobalSchema.DOCTORS_TABLE_NAME + " d INNER JOIN  " + GlobalSchema.SPECIALITIES_TABLE_NAME +
+    			" s ON d.speciality_id=s._id ORDER BY s." + Speciality.SPECIALITY_SNAME;
+            	return db.rawQuery(MY_QUERY, new String[]{});
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -177,6 +175,7 @@ public class DoctorContentProvider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, GlobalSchema.DOCTORS_TABLE_NAME, DOCTORS);
         sUriMatcher.addURI(AUTHORITY, GlobalSchema.DOCTORS_TABLE_NAME + "/#", DOCTOR_ID);
+        sUriMatcher.addURI(AUTHORITY, GlobalSchema.DOCTORS_TABLE_NAME + "/spec", DOCTOR_SPEC_JOIN);
 
         doctorsProjectionMap = new HashMap<String, String>();
         doctorsProjectionMap.put(Person.PERSON_ID, Person.PERSON_ID);
