@@ -100,7 +100,7 @@ public class ScheduleActivity extends Activity {
 		public void onClick(View v) {
 			Intent plannerIntent = new Intent(ScheduleActivity.this, PlannerActivity.class);
 			plannerIntent.putExtra(PlannerActivity.PLANNER_DOCTOR_ID, doctorId);
-			startActivity(plannerIntent);
+			startActivityForResult(plannerIntent, 0);
 		}
 
     }; 
@@ -363,7 +363,10 @@ public class ScheduleActivity extends Activity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Button createSchedule = (Button) findViewById(R.id.createSchedule);
-
+		selectedPanel = 0;
+		selectedSchedule = null;
+		panelOrder.clear();
+		days.clear();
 		switch(scheduleType) {
 		case VIEW_SCHEDULE:
 			createSchedule.setVisibility(View.VISIBLE);
