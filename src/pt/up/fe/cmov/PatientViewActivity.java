@@ -46,6 +46,7 @@ public class PatientViewActivity extends ListActivity {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
 	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        	LoginActivity.loginDoctor = null;
 	        	finish();
 	        	startActivity(intent);
 	        break;

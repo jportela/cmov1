@@ -121,6 +121,7 @@ public class DoctorActivity extends ListActivity implements OnClickListener{
 	    switch (item.getItemId()) {
 	        case searchBtnId:
 	        	finish();
+	        	LoginActivity.loginDoctor = null;
 	        	Intent k = new Intent(DoctorActivity.this, LoginActivity.class);
 				startActivity(k);
 	        break;
