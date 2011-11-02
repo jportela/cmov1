@@ -116,6 +116,7 @@ public class ScheduleActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
+	        	LoginActivity.loginDoctor = null;
 	        	Intent intent = new Intent(this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        	finish();
 	        	startActivity(intent);
