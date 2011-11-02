@@ -47,8 +47,8 @@ public class ListAppointmentActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if(!items.get(position-1).isSection()){
-			int pos = ((EntryItem)items.get(position-1)).getPos();
+		if(!items.get(position).isSection()){
+			int pos = ((EntryItem)items.get(position)).getPos();
 			p = PatientOperations.getRemoteServerPatient(this, DoctorActivity.appointments.get(pos).getPatientId());
 			Intent k = new Intent(ListAppointmentActivity.this, PatientViewActivity.class);
 			startActivity(k);
@@ -69,6 +69,7 @@ public class ListAppointmentActivity extends ListActivity {
 	    switch (item.getItemId()) {
 	        case searchBtnId:
 	        	finish();
+	        	LoginActivity.loginDoctor = null;
 	        	Intent k = new Intent(ListAppointmentActivity.this, LoginActivity.class);
 				startActivity(k);
 	        break;
